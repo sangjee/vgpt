@@ -100,7 +100,6 @@ MedPy
 dicom2nifti
 torchsummary
 ipykernel
-pycocotools-windows
 tensorflow-gpu
 PySoundFile
 selenium

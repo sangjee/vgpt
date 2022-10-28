@@ -186,6 +186,7 @@ if __name__ == '__main__':
     parser.add_argument('--test_data_path', type=str)
     parser.add_argument('--val_data_path', type=str)
     parser.add_argument('--epoch', type=int, default=100)
+    parser.add_argument('--patience', type=int, default=5)
     parser.add_argument('--batch_size', type=int, default=3)
     parser.add_argument("--eval_batch_size", default=32, type=int,
                         help="Total batch size for eval.")
@@ -425,7 +426,7 @@ if __name__ == '__main__':
         exit_train = False
 
 
-        if patience == 1:
+        if patience == args.patience:
             if not use_rl:
                 use_rl = True
                 switch_to_rl = True
