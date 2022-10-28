@@ -185,10 +185,11 @@ if __name__ == '__main__':
     parser.add_argument('--train_data_path', type=str)
     parser.add_argument('--test_data_path', type=str)
     parser.add_argument('--val_data_path', type=str)
+    parser.add_argument('--epoch', type=int, default=100)
     parser.add_argument('--batch_size', type=int, default=3)
     parser.add_argument("--eval_batch_size", default=32, type=int,
                         help="Total batch size for eval.")
-    parser.add_argument('--workers', type=int, default=5)
+    parser.add_argument('--num_workers', type=int, default=0)
     parser.add_argument('--head', type=int, default=12)
     parser.add_argument('--resume_last', action='store_true')
     parser.add_argument('--resume_best', action='store_true')
@@ -261,17 +262,13 @@ if __name__ == '__main__':
     test_df.rename(columns={'image':'image_nii','image_hdf5':'image'},inplace=True)
     val_df.rename(columns={'image':'image_nii','image_hdf5':'image'},inplace=True)
 
-    val_d = build_loaders(val_df, text_field, mode='train')
-    val_d2 = build_loaders(val_df, text_field, mode='valid')
-    data_module = CustomDataModule(train_df=train_df, val_df=val_df, test_df=test_df, batch_size=args.batch_size, tokenizer=text_field, mode='train')
+
+    data_module = CustomDataModule(train_df=train_df, val_df=val_df, test_df=test_df, batch_size=args.batch_size, num_workers=args.num_workers, tokenizer=text_field, mode='train')
     data_module.prepare_data()
     data_module.setup()
-    custom_train_loader = data_module.train_dataloader()
-    custom_test_loader = data_module.test_dataloader()
-    custom_val_loader = data_module.val_dataloader()
 
     
-    data_module2 = CustomDataModule(train_df=train_df, val_df=val_df, test_df=test_df, batch_size=args.batch_size, tokenizer=text_field, mode='valid')
+    data_module2 = CustomDataModule(train_df=train_df, val_df=val_df, test_df=test_df, batch_size=args.batch_size, num_workers=args.num_workers, tokenizer=text_field, mode='valid')
     data_module2.prepare_data()
     data_module2.setup()
 
@@ -281,8 +278,6 @@ if __name__ == '__main__':
     # train_dataset, val_dataset, test_dataset = dataset.splits
 
     train_dataset = build_loaders(train_df, text_field, mode='train')
-    val_dataset = build_loaders(val_df, text_field, mode='train')
-    test_dataset = build_loaders(test_df, text_field, mode='train')
 
     if not os.path.isfile('vocab_%s.pkl' % args.exp_name):
         print("Building vocabulary")
@@ -355,7 +350,7 @@ if __name__ == '__main__':
                 data['epoch'], data['val_loss'], data['best_cider']))
 
     # use_rl=True
-    for e in range(start_epoch, start_epoch + 100):
+    for e in range(start_epoch, start_epoch + args.epoch):
         # dataloader_train = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.workers,
         #                               drop_last=True)
         # dataloader_val = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.workers)
