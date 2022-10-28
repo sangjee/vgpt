@@ -89,7 +89,6 @@ albumentations
 timm
 scispacy
 MedPy
-pycocotools-windows
 tensorflow-gpu
 PySoundFile
 selenium
