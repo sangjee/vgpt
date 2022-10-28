@@ -25,4 +25,3 @@ albumentations
 scispacy
 tensorflow-gpu
 einops
-en_core_web_sm
