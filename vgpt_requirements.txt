@@ -99,7 +99,7 @@ monai
 MedPy
 dicom2nifti
 torchsummary
-ipykernel
+#ipykernel
 tensorflow-gpu
 PySoundFile
 selenium
