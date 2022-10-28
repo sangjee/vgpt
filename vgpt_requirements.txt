@@ -23,10 +23,6 @@ transformers==4.12.5
 ujson
 wrapt
 opencv-python
-huggingface-hub
-SimpleITK
-SimpleITK-SimpleElastix
-pydicom
 nibabel
 h5py
 seaborn
