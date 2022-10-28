@@ -192,8 +192,6 @@ if __name__ == '__main__':
                         help="Total batch size for eval.")
     parser.add_argument('--num_workers', type=int, default=0)
     parser.add_argument('--head', type=int, default=12)
-    parser.add_argument('--resume_last', action='store_true')
-    parser.add_argument('--resume_best', action='store_true')
     parser.add_argument('--logs_folder', type=str, default='/home/lab/sangjee/strok/tensorlog')
     parser.add_argument('--random_seed', type = int, default="42")
     parser.add_argument('--gpt_model_type',type=str, default= "gpt")
@@ -209,13 +207,15 @@ if __name__ == '__main__':
     parser.add_argument('--optimizer_type', type= str, default = "adamw")
     parser.add_argument('--max_grad_norm', default=1.0, type = float)
     parser.add_argument('--train_percentage', default=1.0, type = float)
-    parser.add_argument('--split_train_data', action="store_true")
     parser.add_argument('--reinforcement_lr',type = float, default=1e-5)
     parser.add_argument("--decoder_layer", type= int, default = 12)
     parser.add_argument("--encoder_layer",type=int, default=3)
     parser.add_argument("--tau",type=float, default = 0.0)
 
     args = parser.parse_args()
+
+    resume_last = True
+    resume_best = True
 
 
     if args.gradient_accumulation_steps < 1:
@@ -327,11 +327,11 @@ if __name__ == '__main__':
     patience = 0
     start_epoch = 0
 
-    if args.resume_last or args.resume_best:
-        if args.resume_last:
-            fname = 'saved_models/%s_last.pth' % args.exp_name
+    if resume_last or resume_best:
+        if resume_last:
+            fname = '/home/lab/sangjee/strok/saved_models/%s_last.pth' % args.exp_name
         else:
-            fname = 'saved_models/%s_best.pth' % args.exp_name
+            fname = '/home/lab/sangjee/strok/saved_models/%s_best.pth' % args.exp_name
 
         if os.path.exists(fname):
             data = torch.load(fname)
@@ -441,7 +441,7 @@ if __name__ == '__main__':
 
         if switch_to_rl and not best:
             print(" now we are resuming!!!!")
-            data = torch.load('saved_models/%s_best.pth' % args.exp_name)
+            data = torch.load('/home/lab/sangjee/strok/saved_models/%s_best.pth' % args.exp_name)
             torch.set_rng_state(data['torch_rng_state'])
             torch.cuda.set_rng_state(data['cuda_rng_state'])
             np.random.set_state(data['numpy_rng_state'])
