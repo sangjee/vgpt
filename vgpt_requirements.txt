@@ -28,7 +28,6 @@ h5py
 seaborn
 xlrd
 rouge
-openpyxl
 albumentations
 timm
 scispacy
