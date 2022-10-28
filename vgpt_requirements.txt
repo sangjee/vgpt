@@ -1,6 +1,6 @@
-asn1crypto==1.2.0
-cytoolz==0.9.0.1
-spacy==2.0.11
+asn1crypto==1.5.1
+cytoolz==0.12.0
+spacy==3.4.1
 dill
 h5py
 mkl-fft
@@ -11,7 +11,7 @@ pathlib
 pox
 pytorch-lightning
 sacremoses
-sentencepiece==0.1.91
+sentencepiece==0.1.97
 tensorboard
 tensorboard-plugin-wit
 termcolor
@@ -19,7 +19,7 @@ thinc
 tokenizers
 transformers==4.12.5
 ujson
-wrapt
+wrapt==1.14.1
 opencv-python==4.6.0.66
 albumentations
 scispacy
