@@ -32,6 +32,8 @@ from models.captioning_model import CaptioningModel
 
 import pandas as pd
 import spacy
+import os
+import sys
 
 
 def evaluate_loss(model, dataloader, loss_fn, text_field):
@@ -180,6 +182,9 @@ def train_scst(model, dataloader, cider, text_field,gpt_optimizer,args):
 
 
 if __name__ == '__main__':
+    if os.environ["LC_ALL"] != "C.UTF-8" or os.environ["LANG"] != "C.UTF-8":
+        os.execve(sys.executable,[os.path.realpath(__file__)] + sys.argv,{"LC_ALL": "C.UTF-8", "LANG": "C.UTF-8"})
+
     parser = argparse.ArgumentParser(description='VisualGPT')
     parser.add_argument('--exp_name', type=str, default='visualGPT')
     parser.add_argument('--train_data_path', type=str)
