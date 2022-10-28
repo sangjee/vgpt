@@ -13,7 +13,6 @@ pox
 pytorch-lightning
 sacremoses
 sentencepiece
-scikit-image
 tensorboard
 tensorboard-plugin-wit
 termcolor
