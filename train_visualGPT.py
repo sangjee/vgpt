@@ -194,13 +194,11 @@ if __name__ == '__main__':
     parser.add_argument('--head', type=int, default=12)
     parser.add_argument('--resume_last', action='store_true')
     parser.add_argument('--resume_best', action='store_true')
-    parser.add_argument('--features_path', type=str)
-    parser.add_argument('--annotation_folder', type=str)
-    parser.add_argument('--logs_folder', type=str, default='/home/lab/sangjee/strok/data/tensorlog')
+    parser.add_argument('--logs_folder', type=str, default='/home/lab/sangjee/strok/tensorlog')
     parser.add_argument('--random_seed', type = int, default="42")
     parser.add_argument('--gpt_model_type',type=str, default= "gpt")
     parser.add_argument('--lr', type = float, default=1e-4)
-    parser.add_argument('--log_file',type = str, default="log/visualGPT.txt")
+    parser.add_argument('--log_file',type = str, default="/home/lab/sangjee/strok/log/visualGPT.txt")
     parser.add_argument('--gradient_accumulation_steps', type=int, default=1,
                         help="Number of updates steps to accumulate before performing a backward/update pass.")
 
@@ -246,7 +244,7 @@ if __name__ == '__main__':
     writer = SummaryWriter(log_dir=os.path.join(args.logs_folder, args.exp_name))
 
     # Pipeline for image regions
-    image_field = ImageDetectionsField(detections_path=args.features_path, max_detections=50, load_in_tmp=False)
+    image_field = ImageDetectionsField(detections_path=None, max_detections=50, load_in_tmp=False)
 
     # Pipeline for text
     text_field = TextField(init_token='<?', eos_token='<|endoftext|>', fix_length=55, lower=True, tokenize='spacy',
