@@ -182,6 +182,9 @@ def train_scst(model, dataloader, cider, text_field,gpt_optimizer,args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='VisualGPT')
     parser.add_argument('--exp_name', type=str, default='visualGPT')
+    parser.add_argument('--train_data_path', type=str)
+    parser.add_argument('--test_data_path', type=str)
+    parser.add_argument('--val_data_path', type=str)
     parser.add_argument('--batch_size', type=int, default=3)
     parser.add_argument("--eval_batch_size", default=32, type=int,
                         help="Total batch size for eval.")
@@ -191,7 +194,7 @@ if __name__ == '__main__':
     parser.add_argument('--resume_best', action='store_true')
     parser.add_argument('--features_path', type=str)
     parser.add_argument('--annotation_folder', type=str)
-    parser.add_argument('--logs_folder', type=str, default='tensorboard_logs')
+    parser.add_argument('--logs_folder', type=str, default='/home/lab/sangjee/strok/data/tensorlog')
     parser.add_argument('--random_seed', type = int, default="42")
     parser.add_argument('--gpt_model_type',type=str, default= "gpt")
     parser.add_argument('--lr', type = float, default=1e-4)
@@ -247,9 +250,9 @@ if __name__ == '__main__':
     text_field = TextField(init_token='<?', eos_token='<|endoftext|>', fix_length=55, lower=True, tokenize='spacy',
                            remove_punctuation=True, nopoints=False)
                            
-    train_path = 'D:/strok_data/dataset/combine(hdf5_nifti)_train.csv'
-    test_path = 'D:/strok_data/dataset/combine(hdf5_nifti)_test.csv'
-    val_path = 'D:/strok_data/dataset/combine(hdf5_nifti)_val.csv'
+    train_path = args.train_data_path
+    test_path = args.test_data_path
+    val_path = args.val_data_path
     train_df = pd.read_csv(train_path)
     test_df = pd.read_csv(test_path)
     val_df = pd.read_csv(val_path)
@@ -466,8 +469,8 @@ if __name__ == '__main__':
             'patience': patience,
             'best_cider': best_cider,
             'use_rl': use_rl,
-        }, 'saved_models/%s_last.pth' % args.exp_name)
+        }, '/home/lab/sangjee/strok/saved_models/%s_last.pth' % args.exp_name)
 
         if best:
-            copyfile('saved_models/%s_last.pth' % args.exp_name, 'saved_models/%s_best.pth' % args.exp_name)
+            copyfile('/home/lab/sangjee/strok/saved_models/%s_last.pth' % args.exp_name, '/home/lab/sangjee/strok/saved_models/%s_best.pth' % args.exp_name)
 

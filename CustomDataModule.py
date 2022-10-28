@@ -67,17 +67,6 @@ def build_loaders(dataframe, tokenizer, mode):
             transforms=transforms,
             )
         return dataset
-    elif mode == "dataset":
-        dataset = CustomDataset3(
-            dataframe['image'].values,
-            dataframe['caption'].values,
-            dataframe['input_img1'].values,
-            dataframe['input_img2'].values,
-            dataframe['input_img3'].values,
-            tokenizer=tokenizer,
-            transforms=transforms,
-            )
-        return dataset
   
 def get_transforms(mode="train"):
     if mode == "train":
