@@ -20,7 +20,7 @@ tokenizers
 transformers==4.12.5
 ujson
 wrapt
-opencv-python
+opencv-python==4.6.0.66
 albumentations
 scispacy
 tensorflow-gpu
