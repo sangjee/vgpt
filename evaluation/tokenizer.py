@@ -61,4 +61,8 @@ class PTBTokenizer(object):
                                           if w not in cls.punctuations])
             tokenized_corpus[k].append(tokenized_caption)
 
+        print('--------------tokenized_corpus--------------')
+        print(tokenized_corpus)
+        print('--------------tokenized_corpus--------------')
+
         return tokenized_corpus
