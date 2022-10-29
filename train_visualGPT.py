@@ -388,6 +388,8 @@ if __name__ == '__main__':
         # writer.add_scalar('data/val_meteor', scores['METEOR'], e)
         writer.add_scalar('data/val_rouge', scores['ROUGE'], e)
 
+        print('val_cider : ',val_cider,'val_BLUE1 : ',scores['BLEU'][0],'val_BLUE4 : ',scores['BLEU'][3])
+
         logging.info("val cider"+str(val_cider)+"current epoch "+str(e))
         logging.info("val bleu1" + str(scores["BLEU"][0]) + "current epoch " + str(e))
         logging.info("val bleu4" + str(scores["BLEU"][3]) + "current epoch " + str(e))
