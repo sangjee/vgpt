@@ -129,7 +129,7 @@ def train_xe(model, dataloader, text_field,gpt_optimizer,dataloader_eval,args):
 
 def train_scst(model, dataloader, cider, text_field,gpt_optimizer,args):
     # Training with self-critical
-    tokenizer_pool = multiprocessing.Pool()
+    tokenizer_pool = multiprocessing.Pool(processes=4)
     running_reward = .0
     running_reward_baseline = .0
     model.train()
