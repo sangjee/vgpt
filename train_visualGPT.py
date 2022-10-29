@@ -136,23 +136,24 @@ def train_scst(model, dataloader, cider, text_field,gpt_optimizer,args):
     running_loss = .0
     seq_len = 20
     beam_size = 5
+    out_size = 1
 
     with tqdm(desc='Epoch %d - train' % e, unit='it', total=len(dataloader)) as pbar:
         for it, i in enumerate(dataloader):
             caps_gt = i['text']
             detections = i['image'].to(device)
             outs, log_probs = model.beam_search(detections, seq_len, text_field.vocab.stoi['<|endoftext|>'],
-                                                beam_size, out_size=beam_size)
+                                                beam_size, out_size=out_size)
 
             caps_gen = text_field.decode(outs.view(-1, seq_len))
-            caps_gt = list(itertools.chain(*([c, ] * beam_size for c in caps_gt)))
+            caps_gt = list(itertools.chain(*([c, ] * out_size for c in caps_gt)))
 
             # caps_gen, caps_gt = tokenizer_pool.map(evaluation.PTBTokenizer.tokenize, [caps_gen, caps_gt])
             caps_gen = evaluation.PTBTokenizer.tokenize(caps_gen)
             caps_gt = evaluation.PTBTokenizer.tokenize(caps_gt)
             reward = cider.compute_score(caps_gt, caps_gen)[1].astype(np.float32)
 
-            reward = torch.from_numpy(reward).to(device).view(detections.shape[0], beam_size)
+            reward = torch.from_numpy(reward).to(device).view(detections.shape[0], out_size)
             reward_baseline = torch.mean(reward, -1, keepdim=True)
             loss = -torch.mean(log_probs, -1) * (reward - reward_baseline)
 
