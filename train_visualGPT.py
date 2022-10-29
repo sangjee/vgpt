@@ -135,7 +135,7 @@ def train_scst(model, dataloader, cider, text_field,gpt_optimizer,args):
     model.train()
     running_loss = .0
     seq_len = 20
-    beam_size = 1
+    beam_size = 5
 
     with tqdm(desc='Epoch %d - train' % e, unit='it', total=len(dataloader)) as pbar:
         for it, i in enumerate(dataloader):
@@ -147,7 +147,9 @@ def train_scst(model, dataloader, cider, text_field,gpt_optimizer,args):
             caps_gen = text_field.decode(outs.view(-1, seq_len))
             caps_gt = list(itertools.chain(*([c, ] * beam_size for c in caps_gt)))
 
-            caps_gen, caps_gt = tokenizer_pool.map(evaluation.PTBTokenizer.tokenize, [caps_gen, caps_gt])
+            # caps_gen, caps_gt = tokenizer_pool.map(evaluation.PTBTokenizer.tokenize, [caps_gen, caps_gt])
+            caps_gen = evaluation.PTBTokenizer.tokenize(caps_gen)
+            caps_gt = evaluation.PTBTokenizer.tokenize(caps_gt)
             reward = cider.compute_score(caps_gt, caps_gen)[1].astype(np.float32)
 
             reward = torch.from_numpy(reward).to(device).view(detections.shape[0], beam_size)
