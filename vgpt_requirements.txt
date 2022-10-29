@@ -28,3 +28,4 @@ albumentations
 scispacy
 tensorflow-gpu
 einops
+spacy-download
