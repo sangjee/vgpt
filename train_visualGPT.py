@@ -135,7 +135,7 @@ def train_scst(model, dataloader, cider, text_field,gpt_optimizer,args):
     model.train()
     running_loss = .0
     seq_len = 20
-    beam_size = 2
+    beam_size = 1
     out_size = 1
 
     with tqdm(desc='Epoch %d - train' % e, unit='it', total=len(dataloader)) as pbar:
