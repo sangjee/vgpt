@@ -35,7 +35,7 @@ def get_tokenizer(tokenizer):
     if tokenizer == "spacy":
         try:
             from spacy_download import load_spacy
-            spacy_en = load_spacy("en_core_web_sm", exclude=["parser", "tagger"])
+            spacy_en = load_spacy("en_core_web_sm")
             print("now we are loading the spacy tokenizer")
 
             # return lambda s: [tok.text for tok in spacy_en.tokenizer(s)]
