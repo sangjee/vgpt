@@ -45,7 +45,7 @@ class PTBTokenizer(object):
         # tokenize sentence
         cmd.append(os.path.basename(tmp_file.name))
 
-        p_tokenizer = subprocess.Popen(cmd, cwd=path_to_jar_dirname,stdout=subprocess.PIPE, shell=True)
+        p_tokenizer = subprocess.Popen(cmd, cwd=path_to_jar_dirname,stdout=subprocess.PIPE)
         token_lines = p_tokenizer.communicate(input=sentences.rstrip())[0]
 
         token_lines = token_lines.decode()
