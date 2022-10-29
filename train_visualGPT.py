@@ -139,7 +139,7 @@ def train_scst(model, dataloader, cider, text_field,gpt_optimizer,args):
 
     with tqdm(desc='Epoch %d - train' % e, unit='it', total=len(dataloader)) as pbar:
         for it, i in enumerate(dataloader):
-            caps_gt = i['text'].to(device)
+            caps_gt = i['text']
             detections = i['image'].to(device)
             outs, log_probs = model.beam_search(detections, seq_len, text_field.vocab.stoi['<|endoftext|>'],
                                                 beam_size, out_size=beam_size)
