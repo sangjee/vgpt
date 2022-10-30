@@ -366,7 +366,7 @@ class GPT2LMHead(Module):
 
 
 class GPT2LMHeadModel(Module):
-    def __init__(self, config,padding_idx =47932, tau = 0):
+    def __init__(self, config, padding_idx=0, tau = 0):
         super(GPT2LMHeadModel, self).__init__()
         self.transformer = GPT2Model(config)
         self.lm_head = GPT2LMHead(self.transformer.wte.weight, config)
