@@ -29,6 +29,12 @@ def load_weight(model, state_dict):
     missing_keys = []
     unexpected_keys = []
     error_msgs = []
+
+    # remove embedding and positioning layer
+    for param_tensor in state_dict.copy():
+        if 'wte.weight' in param_tensor or 'wpe.weight'in param_tensor:
+            del(state_dict[param_tensor])
+
     # copy state_dict so _load_from_state_dict can modify it
     metadata = getattr(state_dict, "_metadata", None)
     state_dict = state_dict.copy()
