@@ -244,8 +244,8 @@ class TextField(RawField):
     def build_GPT_vocab(self,data_file):
         import json
         counter = Counter()
-        with open(data_file,"r") as f:
-            data = json.load(f,encoding="utf-8")
+        with open(data_file,"r", encoding='utf-8') as f:
+            data = json.load(f)
 
         for key in data.keys():
             counter.update([key])
