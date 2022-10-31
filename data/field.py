@@ -245,7 +245,7 @@ class TextField(RawField):
         import json
         counter = Counter()
         with open(data_file,"r") as f:
-            data = json.load(f)
+            data = json.load(f,encoding="utf-8")
 
         for key in data.keys():
             counter.update([key])
