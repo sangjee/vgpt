@@ -282,7 +282,7 @@ if __name__ == '__main__':
 
     if not os.path.isfile('vocab_%s.pkl' % args.exp_name):
         print("Building vocabulary")
-        text_field.build_GPT_vocab("data/encoder.json")
+        text_field.build_GPT_vocab("data/encoder_custom.json")
         pickle.dump(text_field.vocab, open('vocab_%s.pkl' % args.exp_name, 'wb'))
     else:
         text_field.vocab = pickle.load(open('vocab_%s.pkl' % args.exp_name, 'rb'))
