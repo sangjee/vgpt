@@ -191,7 +191,7 @@ class TextField(RawField):
 
         # self.encoder = get_encoder()
         # self.encoder = GPT2Tokenizer.from_pretrained("gpt2",TOKENIZERS_PARALLELISM=False)
-        self.encoder = GPT2Tokenizer.from_pretrained(vocab_file='./encoder_custom.json', merges_file='./vocab_custom.bpe', eos_token="<|endoftext|>",bos_token="<?", pad_token="+=")
+        self.encoder = GPT2Tokenizer(vocab_file='./encoder_custom.json', merges_file='./vocab_custom.bpe', eos_token="<|endoftext|>",bos_token="<?", pad_token="+=")
 
         super(TextField, self).__init__(preprocessing, postprocessing)
 
