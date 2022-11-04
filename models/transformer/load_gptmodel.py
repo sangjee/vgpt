@@ -6,7 +6,7 @@
 import logging
 
 logger = logging.getLogger(__name__)
-index_path = 'index_gpt2withhallym.txt'
+index_path = './data/index_gpt2withhallym.txt'
 
 def load_weight(model, state_dict):
     old_keys = []
