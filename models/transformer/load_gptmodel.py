@@ -46,7 +46,7 @@ def load_weight(model, state_dict):
 
     # remove embedding and positioning layer
     for param_tensor in state_dict.copy():
-        if 'wte.weight' in param_tensor or 'wpe.weight' in param_tensor :
+        if 'wte.weight' in param_tensor :
             del(state_dict[param_tensor])
 
     # copy state_dict so _load_from_state_dict can modify it
@@ -60,7 +60,6 @@ def load_weight(model, state_dict):
         module._load_from_state_dict(
             state_dict, prefix, local_metadata, True, missing_keys, unexpected_keys, error_msgs
         )
-        model.transformer.wte.weight = torch.nn.Parameter(custom_weight)
         for name, child in module._modules.items():
             if child is not None:
                 load(child, prefix + name + ".")
@@ -72,4 +71,5 @@ def load_weight(model, state_dict):
 
     # Make sure we are still sharing the output and input embeddings after loading weights
     model.set_tied()
+    model.transformer.wte.weight = torch.nn.Parameter(custom_weight)
     return model
