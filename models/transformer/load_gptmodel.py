@@ -6,6 +6,7 @@
 import logging
 
 logger = logging.getLogger(__name__)
+index_path = 'index_gpt2withhallym.txt'
 
 def load_weight(model, state_dict):
     old_keys = []
@@ -30,9 +31,17 @@ def load_weight(model, state_dict):
     unexpected_keys = []
     error_msgs = []
 
+    # -----
+    with open(index_path, 'r') as f:
+        data = f.readlines()
+    index_list = list(map(int,data))
+    custom_weight = torch.zeros(model.transformer.wte.weight.shape)
+    for i in range(len(index_list)):
+        custom_weight[i,:] = state_dict['wte.weight'][index_list[i],:]
+
     # remove embedding and positioning layer
     for param_tensor in state_dict.copy():
-        if 'wte.weight' in param_tensor or 'wpe.weight'in param_tensor or 'ln_f.weight'in param_tensor or 'ln_f.bias'in param_tensor:
+        if 'wte.weight' in param_tensor :
             del(state_dict[param_tensor])
 
     # copy state_dict so _load_from_state_dict can modify it
@@ -41,11 +50,12 @@ def load_weight(model, state_dict):
     if metadata is not None:
         state_dict._metadata = metadata
 
-    def load(module, prefix=""):
+    def load(module, prefix="", custom_weight=None):
         local_metadata = {} if metadata is None else metadata.get(prefix[:-1], {})
         module._load_from_state_dict(
             state_dict, prefix, local_metadata, True, missing_keys, unexpected_keys, error_msgs
         )
+        model.transformer.wte.weight = torch.nn.Parameter(custom_weight)
         for name, child in module._modules.items():
             if child is not None:
                 load(child, prefix + name + ".")
@@ -53,7 +63,7 @@ def load_weight(model, state_dict):
     start_model = model
     if hasattr(model, "transformer") and all(not s.startswith('transformer.') for s in state_dict.keys()):
         start_model = model.transformer
-    load(start_model, prefix="")
+    load(start_model, prefix="", custom_weight=custom_weight)
 
     # Make sure we are still sharing the output and input embeddings after loading weights
     model.set_tied()
