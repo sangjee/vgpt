@@ -15,7 +15,7 @@ def load_weight(model, state_dict):
     with open(index_path, 'r') as f:
         data = f.readlines()
     index_list = list(map(int,data))
-    
+
     custom_weight = torch.zeros(model.transformer.wte.weight.shape)
     for i in range(len(index_list)):
         custom_weight[i,:] = state_dict['wte.weight'][index_list[i],:]
@@ -46,7 +46,7 @@ def load_weight(model, state_dict):
 
     # remove embedding and positioning layer
     for param_tensor in state_dict.copy():
-        if 'wte.weight' in param_tensor :
+        if 'wte.weight' in param_tensor or 'wpe.weight' in param_tensor :
             del(state_dict[param_tensor])
 
     # copy state_dict so _load_from_state_dict can modify it
