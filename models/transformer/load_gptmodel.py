@@ -4,6 +4,7 @@
     GPT2 Pytorch Model : https://github.com/huggingface/pytorch-pretrained-BERT
 '''
 import logging
+import torch
 
 logger = logging.getLogger(__name__)
 index_path = './data/index_gpt2withhallym.txt'
