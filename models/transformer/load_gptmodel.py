@@ -10,6 +10,16 @@ logger = logging.getLogger(__name__)
 index_path = './data/index_gpt2withhallym.txt'
 
 def load_weight(model, state_dict):
+
+    # -----
+    with open(index_path, 'r') as f:
+        data = f.readlines()
+    index_list = list(map(int,data))
+    
+    custom_weight = torch.zeros(model.transformer.wte.weight.shape)
+    for i in range(len(index_list)):
+        custom_weight[i,:] = state_dict['wte.weight'][index_list[i],:]
+
     old_keys = []
     new_keys = []
     for key in state_dict.keys():
@@ -32,13 +42,7 @@ def load_weight(model, state_dict):
     unexpected_keys = []
     error_msgs = []
 
-    # -----
-    with open(index_path, 'r') as f:
-        data = f.readlines()
-    index_list = list(map(int,data))
-    custom_weight = torch.zeros(model.transformer.wte.weight.shape)
-    for i in range(len(index_list)):
-        custom_weight[i,:] = state_dict['wte.weight'][index_list[i],:]
+
 
     # remove embedding and positioning layer
     for param_tensor in state_dict.copy():
