@@ -21,7 +21,7 @@ class Transformer_visualgpt(CaptioningModel):
         self.bos_idx = bos_idx
         self.encoder = encoder
         self.gpt2_type = gpt2_type
-        self.state_dict = torch.load(pretrained_path, map_location='cpu' if not torch.cuda.is_available() else None)
+        self.state_d = torch.load(pretrained_path, map_location='cpu' if not torch.cuda.is_available() else None)
 
         if gpt2_type =="random":
 
@@ -37,7 +37,7 @@ class Transformer_visualgpt(CaptioningModel):
             config.n_layer = n_layer
             decoder = GPT2LMHeadModel(config,tau=tau)
 
-            decoder = load_weight(decoder, self.state_dict)
+            decoder = load_weight(decoder, self.state_d)
 
             self.decoder = decoder
 

@@ -24,7 +24,6 @@ def load_weight(model, state_dict):
     new_keys = []
     for key in state_dict.keys():
 
-
         new_key = None
         if key.endswith(".g"):
             new_key = key[:-2] + ".weight"
@@ -71,5 +70,5 @@ def load_weight(model, state_dict):
 
     # Make sure we are still sharing the output and input embeddings after loading weights
     model.set_tied()
-    model.transformer.wte.weight = torch.nn.Parameter(custom_weight)
+    # model.transformer.wte.weight = torch.nn.Parameter(custom_weight)
     return model
