@@ -11,14 +11,25 @@ index_path = './data/index_gpt2withhallym.txt'
 
 def load_weight(model, state_dict):
 
-    # -----
+    gpt2_state_dict = torch.load('/home/lab/sangjee/strok/data/pretrained_model/gpt2-pytorch_model.bin', map_location='cpu' if not torch.cuda.is_available() else None)
+    
+    # ----- extract weight and make custom weight-----------
     with open(index_path, 'r') as f:
         data = f.readlines()
     index_list = list(map(int,data))
 
-    custom_weight = torch.zeros(model.transformer.wte.weight.shape)
-    for i in range(len(index_list)):
-        custom_weight[i,:] = state_dict['wte.weight'][index_list[i],:]
+    with open('./data/index_hallym.txt', 'r') as f:
+        data = f.readlines()
+    index_hallym_list = list(map(int,data))
+
+    # custom_weight = torch.zeros(model.transformer.wte.weight.shape)
+    # for i in range(len(index_list)):
+    #     custom_weight[i,:] = state_dict['wte.weight'][index_list[i],:]
+    
+    for i in range(len(index_hallym_list)):
+        state_dict['model.transformer.wte.weight'][index_hallym_list[i],:] = gpt2_state_dict['wte.weight'][index_list[i],:]
+
+
 
     old_keys = []
     new_keys = []
@@ -70,5 +81,5 @@ def load_weight(model, state_dict):
 
     # Make sure we are still sharing the output and input embeddings after loading weights
     model.set_tied()
-    model.transformer.wte.weight = torch.nn.Parameter(custom_weight)
+    # model.transformer.wte.weight = torch.nn.Parameter(custom_weight)
     return model
