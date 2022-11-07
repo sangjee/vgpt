@@ -54,7 +54,7 @@ def load_weight(model, state_dict):
     if metadata is not None:
         state_dict._metadata = metadata
 
-    def load(module, prefix="", custom_weight=None):
+    def load(module, prefix=""):
         local_metadata = {} if metadata is None else metadata.get(prefix[:-1], {})
         module._load_from_state_dict(
             state_dict, prefix, local_metadata, True, missing_keys, unexpected_keys, error_msgs
@@ -66,9 +66,9 @@ def load_weight(model, state_dict):
     start_model = model
     if hasattr(model, "transformer") and all(not s.startswith('transformer.') for s in state_dict.keys()):
         start_model = model.transformer
-    load(start_model, prefix="", custom_weight=custom_weight)
+    load(start_model, prefix="")
 
     # Make sure we are still sharing the output and input embeddings after loading weights
     model.set_tied()
-    # model.transformer.wte.weight = torch.nn.Parameter(custom_weight)
+    model.transformer.wte.weight = torch.nn.Parameter(custom_weight)
     return model
