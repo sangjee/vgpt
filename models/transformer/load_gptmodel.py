@@ -68,7 +68,7 @@ def load_weight(model, state_dict):
                 load(child, prefix + name + ".")
 
     start_model = model
-    if hasattr(model, "transformer") and all(not s.startswith('model.transformer.') for s in state_dict.keys()):
+    if hasattr(model, "transformer") and all(not s.startswith('transformer.') for s in state_dict.keys()):
         start_model = model.transformer
     load(start_model, prefix="")
 
