@@ -38,7 +38,6 @@ class Transformer_visualgpt(CaptioningModel):
             config.n_layer = n_layer
             decoder = GPT2LMHeadModel(config,tau=tau)
             
-            print(pretrained_path)
             decoder = load_weight(decoder, self.state_d)
 
             self.decoder = decoder
