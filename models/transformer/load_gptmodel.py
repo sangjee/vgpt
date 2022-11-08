@@ -4,13 +4,10 @@
     GPT2 Pytorch Model : https://github.com/huggingface/pytorch-pretrained-BERT
 '''
 import logging
-import torch
 
 logger = logging.getLogger(__name__)
-index_path = './data/index_gpt2withhallym.txt'
 
 def load_weight(model, state_dict):
-
     # gpt2_state_dict = torch.load('/home/lab/sangjee/strok/data/pretrained_model/gpt2-pytorch_model.bin', map_location='cpu' if not torch.cuda.is_available() else None)
     
     # # ----- extract weight and make custom weight-----------
@@ -29,11 +26,10 @@ def load_weight(model, state_dict):
     # for i in range(len(index_hallym_list)):
     #     state_dict['model.transformer.wte.weight'][index_hallym_list[i],:] = gpt2_state_dict['wte.weight'][index_list[i],:]
 
-
-
     old_keys = []
     new_keys = []
     for key in state_dict.keys():
+
 
         new_key = None
         if key.endswith(".g"):
@@ -48,17 +44,14 @@ def load_weight(model, state_dict):
     for old_key, new_key in zip(old_keys, new_keys):
         state_dict[new_key] = state_dict.pop(old_key)
 
+    # # remove embedding and positioning layer
+    # for param_tensor in state_dict.copy():
+    #     if 'wte.weight' in param_tensor :
+    #         del(state_dict[param_tensor])
+
     missing_keys = []
     unexpected_keys = []
     error_msgs = []
-
-
-
-    # remove embedding and positioning layer
-    for param_tensor in state_dict.copy():
-        if 'wte.weight' in param_tensor :
-            del(state_dict[param_tensor])
-
     # copy state_dict so _load_from_state_dict can modify it
     metadata = getattr(state_dict, "_metadata", None)
     state_dict = state_dict.copy()

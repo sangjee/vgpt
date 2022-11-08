@@ -148,9 +148,9 @@ def train_scst(model, dataloader, cider, text_field,gpt_optimizer,args):
             caps_gen = text_field.decode(outs.view(-1, seq_len))
             caps_gt = list(itertools.chain(*([c, ] * out_size for c in caps_gt)))
 
-            # caps_gen, caps_gt = tokenizer_pool.map(evaluation.PTBTokenizer.tokenize, [caps_gen, caps_gt])
-            caps_gen = evaluation.PTBTokenizer.tokenize(caps_gen)
-            caps_gt = evaluation.PTBTokenizer.tokenize(caps_gt)
+            caps_gen, caps_gt = tokenizer_pool.map(evaluation.PTBTokenizer.tokenize, [caps_gen, caps_gt])
+            # caps_gen = evaluation.PTBTokenizer.tokenize(caps_gen)
+            # caps_gt = evaluation.PTBTokenizer.tokenize(caps_gt)
             reward = cider.compute_score(caps_gt, caps_gen)[1].astype(np.float32)
 
             reward = torch.from_numpy(reward).to(device).view(detections.shape[0], out_size)
@@ -174,11 +174,10 @@ def train_scst(model, dataloader, cider, text_field,gpt_optimizer,args):
                              reward_baseline=running_reward_baseline / (it + 1))
             pbar.update()
 
-
-
     loss = running_loss / len(dataloader)
     reward = running_reward / len(dataloader)
     reward_baseline = running_reward_baseline / len(dataloader)
+    
     return loss, reward, reward_baseline
 
 if __name__ == '__main__':
@@ -397,7 +396,7 @@ if __name__ == '__main__':
         logging.info("val cider"+str(val_cider)+"current epoch "+str(e))
         logging.info("val bleu1" + str(scores["BLEU"][0]) + "current epoch " + str(e))
         logging.info("val bleu4" + str(scores["BLEU"][3]) + "current epoch " + str(e))
-        # logging.info("val meteor"+str(scores["METEOR"])+"current epoch "+str(e))
+        logging.info("val meteor"+str(scores["METEOR"])+"current epoch "+str(e))
         logging.info("val rouge" + str(scores["ROUGE"]) + "current epoch " + str(e))
 
 
@@ -407,13 +406,13 @@ if __name__ == '__main__':
         writer.add_scalar('data/test_cider', scores['CIDEr'], e)
         writer.add_scalar('data/test_bleu1', scores['BLEU'][0], e)
         writer.add_scalar('data/test_bleu4', scores['BLEU'][3], e)
-        # writer.add_scalar('data/test_meteor', scores['METEOR'], e)
+        writer.add_scalar('data/test_meteor', scores['METEOR'], e)
         writer.add_scalar('data/test_rouge', scores['ROUGE'], e)
 
         logging.info("test cider" + str(scores['CIDEr']) + "current epoch " + str(e))
         logging.info("test bleu1" + str(scores["BLEU"][0]) + "current epoch " + str(e))
         logging.info("test bleu4" + str(scores["BLEU"][3]) + "current epoch " + str(e))
-        # logging.info("test meteor" + str(scores["METEOR"]) + "current epoch " + str(e))
+        logging.info("test meteor" + str(scores["METEOR"]) + "current epoch " + str(e))
         logging.info("test rouge" + str(scores["ROUGE"]) + "current epoch " + str(e))
 
       
