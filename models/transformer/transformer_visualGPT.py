@@ -22,7 +22,7 @@ class Transformer_visualgpt(CaptioningModel):
         self.encoder = encoder
         self.gpt2_type = gpt2_type
         # self.state_d = torch.load(pretrained_path, map_location='cpu' if not torch.cuda.is_available() else None)
-        self.state_d = torch.load(pretrained_path, map_location='cpu' if not torch.cuda.is_available() else None)['state_dict']
+        self.state_d = torch.load(pretrained_path, map_location='cpu' if not torch.cuda.is_available() else None)
 
         if gpt2_type =="random":
 
