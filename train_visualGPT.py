@@ -101,7 +101,7 @@ def inference(model, dataloader, text_field):
             caps_gt = i['text']
 
             with torch.no_grad():
-                out, _ = model.beam_search(images, 20, text_field.vocab.stoi['<|endoftext|>'], 1, out_size=1)
+                out, _ = model.beam_search(images, 20, text_field.vocab.stoi['<|endoftext|>'], 5, out_size=1)
             caps_gen = text_field.decode(out, join_words=True)
             origin_result.append(caps_gt)
             eval_result.append(caps_gen)
@@ -371,12 +371,17 @@ if __name__ == '__main__':
     dict_dataloader_train = data_module2.train_dataloader()
     dict_dataloader_val = data_module2.val_dataloader()
     dict_dataloader_test = data_module2.test_dataloader()
+
     origin_result, eval_result = inference(model, dict_dataloader_test, text_field)
+    
+    origin_list = [data for inner_list in origin_result for data in inner_list]
+    eval_list = [data for inner_list in eval_result for data in inner_list]
+
 
     print(eval_result)
     
-    origin_df = pd.DataFrame(origin_result, columns=['origin_text'])
-    eval_df = pd.DataFrame(eval_result, columns=['inference_text'])
+    origin_df = pd.DataFrame(origin_list, columns=['origin_text'])
+    eval_df = pd.DataFrame(eval_list, columns=['inference_text'])
     
     result_df = pd.concat([origin_df,eval_df], axis=1)
 
