@@ -49,7 +49,7 @@ class CustomDataset(Dataset):
 def _get_image(image):
     image = np.array(image)
     image = image.astype(np.float32)
-    image = cv2.normalize(image, None, 0, 255, cv2.NORM_MINMAX) #albumentations.Normalize는 0~255사이의 값을 -1~1 사이로 바꿔주는 API, 0~255사이의 값으로 넘겨줘야함
+    image = cv2.normalize(image, None, 0, 255, cv2.NORM_MINMAX) # albumentations.Normalize is an API that converts a value between 0 to 255 into a value between -1 and 1, so need to pass a value between 0 and 255.
     image = cv2.resize(image, dsize=(256, 256))
 
     return image
