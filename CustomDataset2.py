@@ -47,6 +47,6 @@ def _get_image(image):
     image = np.array(image)
     image = image.astype(np.float32)
     # image = cv2.normalize(image, None, 0, 255, cv2.NORM_MINMAX)
-    # image = cv2.resize(image, dsize=(256, 256))
+    image = cv2.resize(image, dsize=(256, 256))
 
     return image
