@@ -43,7 +43,7 @@ class CustomDataModule(pl.LightningDataModule):
             num_workers=self.num_workers
             )
 def build_loaders(dataframe, tokenizer, mode):
-    transforms = get_transforms(mode=mode)
+    # transforms = get_transforms(mode=mode)
 
     if mode == "train":
         dataset = CustomDataset(
@@ -53,7 +53,7 @@ def build_loaders(dataframe, tokenizer, mode):
             dataframe['input_img2'].values,
             dataframe['input_img3'].values,
             tokenizer=tokenizer,
-            transforms=transforms,
+            # transforms=transforms,
             )
         return dataset
     elif mode == "valid":
@@ -64,22 +64,22 @@ def build_loaders(dataframe, tokenizer, mode):
             dataframe['input_img2'].values,
             dataframe['input_img3'].values,
             tokenizer=tokenizer,
-            transforms=transforms,
+            # transforms=transforms,
             )
         return dataset
   
-def get_transforms(mode="train"):
-    if mode == "train":
-        return A.Compose(
-            [
-                A.Resize(224, 224, always_apply=True),
-                A.Normalize(max_pixel_value=255.0, always_apply=True),
-            ]
-        )
-    else:
-        return A.Compose(
-            [
-                A.Resize(224, 224, always_apply=True),
-                A.Normalize(max_pixel_value=255.0, always_apply=True),
-            ]
-        )
+# def get_transforms(mode="train"):
+#     if mode == "train":
+#         return A.Compose(
+#             [
+#                 A.Resize(224, 224, always_apply=True),
+#                 A.Normalize(max_pixel_value=255.0, always_apply=True),
+#             ]
+#         )
+#     else:
+#         return A.Compose(
+#             [
+#                 A.Resize(224, 224, always_apply=True),
+#                 A.Normalize(max_pixel_value=255.0, always_apply=True),
+#             ]
+#         )
