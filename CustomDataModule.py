@@ -80,6 +80,6 @@ def get_transforms(mode="train"):
         return A.Compose(
             [
                 A.Resize(224, 224, always_apply=True),
-                A.Normalize(max_pixel_value=255.0, always_apply=True),
+                A.Normalize(max_pixel_value=255.0, always_apply=True),A.Normalize(max_pixel_value=255.0, always_apply=True), # 통상적으로 사용하는 imagenet에서 계산된 mean값과 std값 사용 => mean=(0.485, 0.456, 0.406),std=(0.229, 0.224, 0.225)
             ]
         )
