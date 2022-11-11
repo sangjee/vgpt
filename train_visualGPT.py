@@ -374,9 +374,9 @@ if __name__ == '__main__':
 
     origin_result, eval_result = inference(model, dict_dataloader_test, text_field)
     
-    origin_list = [data for inner_list in origin_result for data in inner_list]
-    eval_list = [data for inner_list in eval_result for data in inner_list]
-
+    origin_list = [data for inner_list in origin_result for data in inner_list] # remove batch
+    eval_list = [data for inner_list in eval_result for data in inner_list] # remove batch
+ 
 
     print(eval_result)
     
