@@ -102,7 +102,7 @@ def inference(model, dataloader, text_field):
 
             with torch.no_grad():
                 out, _ = model.beam_search(images, 20, text_field.vocab.stoi['<|endoftext|>'], 5, out_size=1)
-            caps_gen = text_field.decode(out, join_words=False)
+            caps_gen = text_field.decode(out, join_words=True)
             origin_result.append(caps_gt)
             eval_result.append(caps_gen)
 
