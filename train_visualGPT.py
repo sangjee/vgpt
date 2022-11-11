@@ -92,7 +92,8 @@ def evaluate_metrics(model, dataloader, text_field, exp_name, epoch):
     return scores
 
 def inference(model, dataloader, text_field):
-    result={}
+    origin_result=[]
+    eval_result=[]
     with tqdm(desc='inference', unit='it', total=len(dataloader)) as pbar:
         for it, i in enumerate(iter(dataloader)):
 
@@ -102,12 +103,12 @@ def inference(model, dataloader, text_field):
             with torch.no_grad():
                 out, _ = model.beam_search(images, 20, text_field.vocab.stoi['<|endoftext|>'], 5, out_size=1)
             caps_gen = text_field.decode(out, join_words=False)
-
-            result[caps_gt] = caps_gen
+            origin_result.append(caps_gt)
+            eval_result.append(caps_gen)
 
             pbar.update()
 
-    return result
+    return origin_result, eval_result
 
 
 def train_xe(model, dataloader, text_field,gpt_optimizer,dataloader_eval,args):
@@ -370,10 +371,14 @@ if __name__ == '__main__':
     dict_dataloader_train = data_module2.train_dataloader()
     dict_dataloader_val = data_module2.val_dataloader()
     dict_dataloader_test = data_module2.test_dataloader()
-    result = inference(model, dict_dataloader_test, text_field)
+    origin_result, eval_result = inference(model, dict_dataloader_test, text_field)
 
-    print(result)
+    print(eval_result)
+    
+    origin_df = pd.DataFrame(origin_result, columns=['origin_text'])
+    eval_df = pd.DataFrame(eval_result, columns=['inference_text'])
+    
+    result_df = pd.concat([origin_df,eval_df], axis=1)
 
-    result_df = pd.DataFrame(result,columns=['origin_text','inference_text'])
     result_df.to_csv('/home/lab/sangjee/strok/data/result.csv',index=False)
 
