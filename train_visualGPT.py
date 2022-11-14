@@ -310,7 +310,7 @@ if __name__ == '__main__':
 
     # Model and dataloaders
     encoder = VisualEncoder(args.encoder_layer, 0, attention_module=ScaledDotProductAttention)
-    model = Transformer_visualgpt(text_field.vocab.stoi['<?'], encoder, args.gpt_model_type, args.decoder_layer,tau=args.tau, pretrained_path=args.pretrained_path).to(device)
+    model = Transformer_visualgpt(text_field.vocab.stoi['<?'], encoder, args.gpt_model_type, args.decoder_layer,tau=args.tau).to(device)
 
     # dict_dataset_train = train_dataset.image_dictionary({'image': image_field, 'text': RawField()})
     
