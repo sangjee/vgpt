@@ -91,6 +91,25 @@ def evaluate_metrics(model, dataloader, text_field, exp_name, epoch):
 
     return scores
 
+def inference(model, dataloader, text_field):
+    origin_result=[]
+    eval_result=[]
+    with tqdm(desc='inference', unit='it', total=len(dataloader)) as pbar:
+        for it, i in enumerate(iter(dataloader)):
+
+            images = i['image'].to(device)
+            caps_gt = i['text']
+
+            with torch.no_grad():
+                out, _ = model.beam_search(images, 20, text_field.vocab.stoi['<|endoftext|>'], 5, out_size=1)
+            caps_gen = text_field.decode(out, join_words=True)
+            origin_result.append(caps_gt)
+            eval_result.append(caps_gen)
+
+            pbar.update()
+
+    return origin_result, eval_result
+
 
 def train_xe(model, dataloader, text_field,gpt_optimizer,dataloader_eval,args):
     # Training with cross-entropy
@@ -148,9 +167,9 @@ def train_scst(model, dataloader, cider, text_field,gpt_optimizer,args):
             caps_gen = text_field.decode(outs.view(-1, seq_len))
             caps_gt = list(itertools.chain(*([c, ] * out_size for c in caps_gt)))
 
-            # caps_gen, caps_gt = tokenizer_pool.map(evaluation.PTBTokenizer.tokenize, [caps_gen, caps_gt])
-            caps_gen = evaluation.PTBTokenizer.tokenize(caps_gen)
-            caps_gt = evaluation.PTBTokenizer.tokenize(caps_gt)
+            caps_gen, caps_gt = tokenizer_pool.map(evaluation.PTBTokenizer.tokenize, [caps_gen, caps_gt])
+            # caps_gen = evaluation.PTBTokenizer.tokenize(caps_gen)
+            # caps_gt = evaluation.PTBTokenizer.tokenize(caps_gt)
             reward = cider.compute_score(caps_gt, caps_gen)[1].astype(np.float32)
 
             reward = torch.from_numpy(reward).to(device).view(detections.shape[0], out_size)
@@ -174,11 +193,10 @@ def train_scst(model, dataloader, cider, text_field,gpt_optimizer,args):
                              reward_baseline=running_reward_baseline / (it + 1))
             pbar.update()
 
-
-
     loss = running_loss / len(dataloader)
     reward = running_reward / len(dataloader)
     reward_baseline = running_reward_baseline / len(dataloader)
+    
     return loss, reward, reward_baseline
 
 if __name__ == '__main__':
@@ -213,6 +231,8 @@ if __name__ == '__main__':
     parser.add_argument("--decoder_layer", type= int, default = 12)
     parser.add_argument("--encoder_layer",type=int, default=3)
     parser.add_argument("--tau",type=float, default = 0.0)
+    parser.add_argument("--pretrained_path",type=str, default='/home/lab/sangjee/strok/data/pretrained_model/pytorch_model.bin')
+    parser.add_argument("--eval_path",type=str, default='/home/lab/sangjee/strok/data/pretrained_model/gpt2-pytorch_model.bin')
 
     args = parser.parse_args()
 
@@ -282,7 +302,7 @@ if __name__ == '__main__':
 
     if not os.path.isfile('vocab_%s.pkl' % args.exp_name):
         print("Building vocabulary")
-        text_field.build_GPT_vocab("data/encoder.json")
+        text_field.build_GPT_vocab("data/encoder_custom.json")
         pickle.dump(text_field.vocab, open('vocab_%s.pkl' % args.exp_name, 'wb'))
     else:
         text_field.vocab = pickle.load(open('vocab_%s.pkl' % args.exp_name, 'rb'))
@@ -290,7 +310,7 @@ if __name__ == '__main__':
 
     # Model and dataloaders
     encoder = VisualEncoder(args.encoder_layer, 0, attention_module=ScaledDotProductAttention)
-    model = Transformer_visualgpt(text_field.vocab.stoi['<?'], encoder, args.gpt_model_type, args.decoder_layer,tau=args.tau).to(device)
+    model = Transformer_visualgpt(text_field.vocab.stoi['<?'], encoder, args.gpt_model_type, args.decoder_layer,tau=args.tau, pretrained_path=args.pretrained_path).to(device)
 
     # dict_dataset_train = train_dataset.image_dictionary({'image': image_field, 'text': RawField()})
     
@@ -329,146 +349,40 @@ if __name__ == '__main__':
     patience = 0
     start_epoch = 0
 
-    if resume_last or resume_best:
-        if resume_last:
-            fname = '/home/lab/sangjee/strok/saved_models/%s_last.pth' % args.exp_name
-        else:
-            fname = '/home/lab/sangjee/strok/saved_models/%s_best.pth' % args.exp_name
+    if os.path.exists(args.eval_path):
+        print('-----------test--------------')
 
-        if os.path.exists(fname):
-            data = torch.load(fname)
-            torch.set_rng_state(data['torch_rng_state'])
-            torch.cuda.set_rng_state(data['cuda_rng_state'])
-            np.random.set_state(data['numpy_rng_state'])
-            random.setstate(data['random_rng_state'])
-            model.load_state_dict(data['state_dict'], strict=False)
-            gpt_optimizer.load_state_dict(data['optimizer'])
-            start_epoch = data['epoch'] + 1
-            best_cider = data['best_cider']
-            patience = data['patience']
-            use_rl = data['use_rl']
-            print('Resuming from epoch %d, validation loss %f, and best cider %f' % (
-                data['epoch'], data['val_loss'], data['best_cider']))
+        data = torch.load(args.eval_path)
+        torch.set_rng_state(data['torch_rng_state'])
+        torch.cuda.set_rng_state(data['cuda_rng_state'])
+        np.random.set_state(data['numpy_rng_state'])
+        random.setstate(data['random_rng_state'])
+        model.load_state_dict(data['state_dict'], strict=False)
+        gpt_optimizer.load_state_dict(data['optimizer'])
+        start_epoch = data['epoch'] + 1
+        best_cider = data['best_cider']
+        patience = data['patience']
+        use_rl = data['use_rl']
+        print('Resuming from epoch %d, validation loss %f, and best cider %f' % (
+            data['epoch'], data['val_loss'], data['best_cider']))
 
-    # use_rl=True
-    for e in range(start_epoch, start_epoch + args.epoch):
-        # dataloader_train = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.workers,
-        #                               drop_last=True)
-        # dataloader_val = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.workers)
-        # dict_dataloader_train = DataLoader(dict_dataset_train, batch_size=args.batch_size // 5, shuffle=True,
-        #                                    num_workers=args.workers)
-        # dict_dataloader_val = DataLoader(dict_dataset_val, batch_size=args.batch_size // 5)
-        # dict_dataloader_test = DataLoader(dict_dataset_test, batch_size=args.batch_size // 5)
+    dataloader_train = data_module.train_dataloader()
+    dataloader_val = data_module.val_dataloader()
+    dict_dataloader_train = data_module2.train_dataloader()
+    dict_dataloader_val = data_module2.val_dataloader()
+    dict_dataloader_test = data_module2.test_dataloader()
 
-        dataloader_train = data_module.train_dataloader()
-        dataloader_val = data_module.val_dataloader()
-        dict_dataloader_train = data_module2.train_dataloader()
-        dict_dataloader_val = data_module2.val_dataloader()
-        dict_dataloader_test = data_module2.test_dataloader()
+    origin_result, eval_result = inference(model, dict_dataloader_test, text_field)
+    
+    origin_list = [data for inner_list in origin_result for data in inner_list] # remove batch
+    eval_list = [data for inner_list in eval_result for data in inner_list] # remove batch
+ 
 
-        if not use_rl:
-            train_loss = train_xe(model, dataloader_train, text_field,gpt_optimizer,dataloader_val,args)
+    print(eval_result)
+    
+    origin_df = pd.DataFrame(origin_list, columns=['origin_text'])
+    eval_df = pd.DataFrame(eval_list, columns=['inference_text'])
+    
+    result_df = pd.concat([origin_df,eval_df], axis=1)
 
-            writer.add_scalar('data/train_loss', train_loss, e)
-        else:
-     
-            train_loss, reward, reward_baseline = train_scst(model, dict_dataloader_train, cider_train, text_field,
-                                                                 gpt_optimizer, args)
-            writer.add_scalar('data/train_loss', train_loss, e)
-            writer.add_scalar('data/reward', reward, e)
-            writer.add_scalar('data/reward_baseline', reward_baseline, e)
-
-        # Validation loss
-        val_loss = evaluate_loss(model, dataloader_val, loss_fn, text_field)
-        writer.add_scalar('data/val_loss', val_loss, e)
-
-        # Validation scores
-        scores = evaluate_metrics(model, dict_dataloader_val, text_field, args.exp_name+"_val", str(e))
-        val_cider = scores['CIDEr']
-        writer.add_scalar('data/val_cider', val_cider, e)
-        writer.add_scalar('data/val_bleu1', scores['BLEU'][0], e)
-        writer.add_scalar('data/val_bleu4', scores['BLEU'][3], e)
-        # writer.add_scalar('data/val_meteor', scores['METEOR'], e)
-        writer.add_scalar('data/val_rouge', scores['ROUGE'], e)
-
-        print('val_cider : ',val_cider,'val_BLUE1 : ',scores['BLEU'][0],'val_BLUE4 : ',scores['BLEU'][3])
-
-        logging.info("val cider"+str(val_cider)+"current epoch "+str(e))
-        logging.info("val bleu1" + str(scores["BLEU"][0]) + "current epoch " + str(e))
-        logging.info("val bleu4" + str(scores["BLEU"][3]) + "current epoch " + str(e))
-        # logging.info("val meteor"+str(scores["METEOR"])+"current epoch "+str(e))
-        logging.info("val rouge" + str(scores["ROUGE"]) + "current epoch " + str(e))
-
-
-
-        # Test scores
-        scores = evaluate_metrics(model, dict_dataloader_test, text_field, args.exp_name+"_test", str(e))
-        writer.add_scalar('data/test_cider', scores['CIDEr'], e)
-        writer.add_scalar('data/test_bleu1', scores['BLEU'][0], e)
-        writer.add_scalar('data/test_bleu4', scores['BLEU'][3], e)
-        # writer.add_scalar('data/test_meteor', scores['METEOR'], e)
-        writer.add_scalar('data/test_rouge', scores['ROUGE'], e)
-
-        logging.info("test cider" + str(scores['CIDEr']) + "current epoch " + str(e))
-        logging.info("test bleu1" + str(scores["BLEU"][0]) + "current epoch " + str(e))
-        logging.info("test bleu4" + str(scores["BLEU"][3]) + "current epoch " + str(e))
-        # logging.info("test meteor" + str(scores["METEOR"]) + "current epoch " + str(e))
-        logging.info("test rouge" + str(scores["ROUGE"]) + "current epoch " + str(e))
-
-      
-        best = False
-        if val_cider >= best_cider:
-            best_cider = val_cider
-            patience = 0
-            best = True
-        else:
-            patience += 1
-
-        switch_to_rl = False
-        exit_train = False
-
-
-        if patience == args.patience:
-            if not use_rl:
-                use_rl = True
-                switch_to_rl = True
-                patience = 0
-
-
-                gpt_optimizer = AdamW(model.parameters(),
-                                     lr = args.reinforcement_lr,betas=(0.9, 0.999), eps=1e-8)
-
-                print("Switching to RL")
-            else:
-                print('patience reached.')
-                exit_train = True
-
-        if switch_to_rl and not best:
-            print(" now we are resuming!!!!")
-            data = torch.load('/home/lab/sangjee/strok/saved_models/%s_best.pth' % args.exp_name)
-            torch.set_rng_state(data['torch_rng_state'])
-            torch.cuda.set_rng_state(data['cuda_rng_state'])
-            np.random.set_state(data['numpy_rng_state'])
-            random.setstate(data['random_rng_state'])
-            model.load_state_dict(data['state_dict'])
-            print('Resuming from epoch %d, validation loss %f, and best cider %f' % (
-                data['epoch'], data['val_loss'], data['best_cider']))
-
-        torch.save({
-            'torch_rng_state': torch.get_rng_state(),
-            'cuda_rng_state': torch.cuda.get_rng_state(),
-            'numpy_rng_state': np.random.get_state(),
-            'random_rng_state': random.getstate(),
-            'epoch': e,
-            'val_loss': val_loss,
-            'val_cider': val_cider,
-            'state_dict': model.state_dict(),
-            'optimizer': gpt_optimizer.state_dict(),
-            'patience': patience,
-            'best_cider': best_cider,
-            'use_rl': use_rl,
-        }, '/home/lab/sangjee/strok/saved_models/%s_last.pth' % args.exp_name)
-
-        if best:
-            copyfile('/home/lab/sangjee/strok/saved_models/%s_last.pth' % args.exp_name, '/home/lab/sangjee/strok/saved_models/%s_best.pth' % args.exp_name)
-
+    result_df.to_csv('/home/lab/sangjee/strok/data/result.csv',index=False)
