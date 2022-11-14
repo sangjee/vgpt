@@ -384,8 +384,9 @@ if __name__ == '__main__':
 
         # Validation scores
         scores = evaluate_metrics(model, dict_dataloader_val, text_field, args.exp_name+"_val", str(e))
-        val_cider = scores['CIDEr']
-        writer.add_scalar('data/val_cider', val_cider, e)
+        # val_cider = scores['CIDEr']
+        val_cider = scores['BLEU'][0]
+        writer.add_scalar('data/val_cider', scores['CIDEr'], e)
         writer.add_scalar('data/val_bleu1', scores['BLEU'][0], e)
         writer.add_scalar('data/val_bleu4', scores['BLEU'][3], e)
         # writer.add_scalar('data/val_meteor', scores['METEOR'], e)
