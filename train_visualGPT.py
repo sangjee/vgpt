@@ -302,7 +302,7 @@ if __name__ == '__main__':
 
     if not os.path.isfile('vocab_%s.pkl' % args.exp_name):
         print("Building vocabulary")
-        text_field.build_GPT_vocab("data/encoder_custom.json")
+        text_field.build_GPT_vocab("data/encoder.json")
         pickle.dump(text_field.vocab, open('vocab_%s.pkl' % args.exp_name, 'wb'))
     else:
         text_field.vocab = pickle.load(open('vocab_%s.pkl' % args.exp_name, 'rb'))
@@ -350,8 +350,6 @@ if __name__ == '__main__':
     start_epoch = 0
 
     if os.path.exists(args.eval_path):
-        print('-----------test--------------')
-
         data = torch.load(args.eval_path)
         torch.set_rng_state(data['torch_rng_state'])
         torch.cuda.set_rng_state(data['cuda_rng_state'])
