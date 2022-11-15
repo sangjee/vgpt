@@ -66,7 +66,7 @@ def evaluate_metrics(model, dataloader, text_field, exp_name, epoch):
 
     gen = {}
     gts = {}
-    with tqdm(desc='Epoch %d - evaluation' % e, unit='it', total=len(dataloader)) as pbar:
+    with tqdm(desc='evaluation', unit='it', total=len(dataloader)) as pbar:
         for it, i in enumerate(iter(dataloader)):
 
             images = i['image'].to(device)
@@ -86,6 +86,9 @@ def evaluate_metrics(model, dataloader, text_field, exp_name, epoch):
 
     gts = evaluation.PTBTokenizer.tokenize(gts)
     gen = evaluation.PTBTokenizer.tokenize(gen)
+
+    print('gts : ', gts)
+    print('gen : ', gen)
 
     scores, _ = evaluation.compute_scores(gts, gen)
 
@@ -371,12 +374,14 @@ if __name__ == '__main__':
     dict_dataloader_test = data_module2.test_dataloader()
 
     origin_result, eval_result = inference(model, dict_dataloader_test, text_field)
+    scores = evaluate_metrics(model, dict_dataloader_val, text_field)
     
     origin_list = [data for inner_list in origin_result for data in inner_list] # remove batch
     eval_list = [data for inner_list in eval_result for data in inner_list] # remove batch
  
 
     print(eval_result)
+    print("val bleu1 : " + str(scores["BLEU"][0]))
     
     origin_df = pd.DataFrame(origin_list, columns=['origin_text'])
     eval_df = pd.DataFrame(eval_list, columns=['inference_text'])
