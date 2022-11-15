@@ -59,7 +59,7 @@ def evaluate_loss(model, dataloader, loss_fn, text_field):
     return val_loss
 
 
-def evaluate_metrics(model, dataloader, text_field, exp_name, epoch):
+def evaluate_metrics(model, dataloader, text_field):
     import itertools
 
     model.eval()
