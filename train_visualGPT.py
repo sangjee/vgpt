@@ -96,7 +96,7 @@ def evaluate_metrics(model, dataloader, text_field):
 
 def inference(model, dataloader, text_field):
     model.eval()
-    
+
     origin_result=[]
     eval_result=[]
     with tqdm(desc='inference', unit='it', total=len(dataloader)) as pbar:
@@ -369,25 +369,25 @@ if __name__ == '__main__':
         print('Resuming from epoch %d, validation loss %f, and best cider %f' % (
             data['epoch'], data['val_loss'], data['best_cider']))
 
-    dataloader_train = data_module.train_dataloader()
-    dataloader_val = data_module.val_dataloader()
-    dict_dataloader_train = data_module2.train_dataloader()
-    dict_dataloader_val = data_module2.val_dataloader()
-    dict_dataloader_test = data_module2.test_dataloader()
+        dataloader_train = data_module.train_dataloader()
+        dataloader_val = data_module.val_dataloader()
+        dict_dataloader_train = data_module2.train_dataloader()
+        dict_dataloader_val = data_module2.val_dataloader()
+        dict_dataloader_test = data_module2.test_dataloader()
 
-    origin_result, eval_result = inference(model, dict_dataloader_test, text_field)
-    scores = evaluate_metrics(model, dict_dataloader_test, text_field)
+        origin_result, eval_result = inference(model, dict_dataloader_test, text_field)
+        scores = evaluate_metrics(model, dict_dataloader_test, text_field)
+        
+        origin_list = [data for inner_list in origin_result for data in inner_list] # remove batch
+        eval_list = [data for inner_list in eval_result for data in inner_list] # remove batch
     
-    origin_list = [data for inner_list in origin_result for data in inner_list] # remove batch
-    eval_list = [data for inner_list in eval_result for data in inner_list] # remove batch
- 
 
-    print(eval_result)
-    print("val bleu1 : " + str(scores["BLEU"][0]))
-    
-    origin_df = pd.DataFrame(origin_list, columns=['origin_text'])
-    eval_df = pd.DataFrame(eval_list, columns=['inference_text'])
-    
-    result_df = pd.concat([origin_df,eval_df], axis=1)
+        print(eval_result)
+        print("val bleu1 : " + str(scores["BLEU"][0]))
+        
+        origin_df = pd.DataFrame(origin_list, columns=['origin_text'])
+        eval_df = pd.DataFrame(eval_list, columns=['inference_text'])
+        
+        result_df = pd.concat([origin_df,eval_df], axis=1)
 
-    result_df.to_csv('/home/lab/sangjee/strok/data/result.csv',index=False)
+        result_df.to_csv('/home/lab/sangjee/strok/data/result.csv',index=False)
