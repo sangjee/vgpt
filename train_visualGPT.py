@@ -92,6 +92,7 @@ def evaluate_metrics(model, dataloader, text_field, exp_name, epoch):
     return scores
 
 def inference(model, dataloader, text_field):
+    model.eval()
     origin_result=[]
     eval_result=[]
     with tqdm(desc='inference', unit='it', total=len(dataloader)) as pbar:
