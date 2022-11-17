@@ -213,6 +213,7 @@ if __name__ == '__main__':
     parser.add_argument("--encoder_layer",type=int, default=3)
     parser.add_argument("--tau",type=float, default = 0.0)
     parser.add_argument("--pretrained_path",type=str, default='/home/lab/sangjee/strok/data/pretrained_model/pytorch_model.bin')
+    parser.add_argument("--pretrained_mode",type=str, default=None)
 
     args = parser.parse_args()
 
@@ -290,7 +291,7 @@ if __name__ == '__main__':
 
     # Model and dataloaders
     encoder = VisualEncoder(args.encoder_layer, 0, attention_module=ScaledDotProductAttention)
-    model = Transformer_visualgpt(text_field.vocab.stoi['<?'], encoder, args.gpt_model_type, args.decoder_layer,tau=args.tau, pretrained_path=args.pretrained_path).to(device)
+    model = Transformer_visualgpt(text_field.vocab.stoi['<?'], encoder, args.gpt_model_type, args.decoder_layer,tau=args.tau, pretrained_path=args.pretrained_path, mode=args.pretrained_mode).to(device)
 
     # dict_dataset_train = train_dataset.image_dictionary({'image': image_field, 'text': RawField()})
     

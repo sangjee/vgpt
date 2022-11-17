@@ -16,13 +16,14 @@ from einops.layers.torch import Rearrange
 
 class Transformer_visualgpt(CaptioningModel):
 
-    def __init__(self, bos_idx, encoder, gpt2_type,n_layer=12,tau=0, pretrained_path='/home/lab/sangjee/strok/data/pretrained_model/gpt2_hallym_pretrained.ckpt'):
+    def __init__(self, bos_idx, encoder, gpt2_type,n_layer=12,tau=0, pretrained_path=None, mode=None):
         super(Transformer_visualgpt, self).__init__()
         self.bos_idx = bos_idx
         self.encoder = encoder
         self.gpt2_type = gpt2_type
         # self.state_d = torch.load(pretrained_path, map_location='cpu' if not torch.cuda.is_available() else None)
         self.state_d = torch.load(pretrained_path, map_location='cpu' if not torch.cuda.is_available() else None)
+        self.mode=mode
 
         if gpt2_type =="random":
 
@@ -38,7 +39,7 @@ class Transformer_visualgpt(CaptioningModel):
             config.n_layer = n_layer
             decoder = GPT2LMHeadModel(config,tau=tau)
             
-            decoder = load_weight(decoder, self.state_d)
+            decoder = load_weight(decoder, self.state_d, self.mode)
 
             self.decoder = decoder
 
