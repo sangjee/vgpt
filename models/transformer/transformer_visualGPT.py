@@ -12,7 +12,8 @@ from models.transformer.config import GPT2Config
 from models.transformer.load_gptmodel import load_weight
 from einops.layers.torch import Rearrange
 
-state_dict = torch.load('/home/lab/sangjee/strok/data/pretrained_model/gpt2-pytorch_model.bin', map_location='cpu' if not torch.cuda.is_available() else None)
+# state_dict = torch.load('/home/lab/sangjee/strok/data/pretrained_model/gpt2-pytorch_model.bin', map_location='cpu' if not torch.cuda.is_available() else None)
+state_dict = torch.load('/home/lab/sangjee/strok/data/pretrained_model/hallym_data_with_gpt2_vocab.ckpt', map_location='cpu' if not torch.cuda.is_available() else None)
 
 
 class Transformer_visualgpt(CaptioningModel):
