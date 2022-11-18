@@ -12,8 +12,6 @@ def load_weight(model, state_dict, mode=None):
     if mode == 'extract':
         print('-----pretrained mode extract-----')
         import torch
-        gpt2_state_dict = torch.load('/home/lab/sangjee/strok/data/pretrained_model/gpt2-pytorch_model.bin', map_location='cpu' if not torch.cuda.is_available() else None)
-        
         # ----- extract weight and make custom weight-----------
         with open('./data/index_gpt2withhallym.txt', 'r') as f:
             data = f.readlines()
@@ -23,12 +21,13 @@ def load_weight(model, state_dict, mode=None):
             data = f.readlines()
         index_hallym_list = list(map(int,data))
 
-        # custom_weight = torch.zeros(model.transformer.wte.weight.shape)
-        # for i in range(len(index_list)):
-        #     custom_weight[i,:] = state_dict['wte.weight'][index_list[i],:]
-        
-        for i in range(len(index_hallym_list)):
-            state_dict['wte.weight'][index_hallym_list[i],:] = gpt2_state_dict['wte.weight'][index_list[i],:]
+        custom_weight = torch.zeros(model.transformer.wte.weight.shape)
+        for i in range(len(index_list)):
+            custom_weight[index_hallym_list[i],:] = state_dict['wte.weight'][index_list[i],:]
+
+        for param_tensor in state_dict.copy():
+            if 'wte.weight' in param_tensor or 'lm_head.weight' in param_tensor :
+                del(state_dict[param_tensor])
 
     if mode == 'remove':
         print('-----pretrained mode remove-----')
@@ -78,7 +77,9 @@ def load_weight(model, state_dict, mode=None):
     if hasattr(model, "transformer") and all(not s.startswith('transformer.') for s in state_dict.keys()):
         start_model = model.transformer
     load(start_model, prefix="")
-
+    
+    if mode == 'extract':
+            model.transformer.wte.weight = torch.nn.Parameter(custom_weight)
     # Make sure we are still sharing the output and input embeddings after loading weights
     model.set_tied()
     # model.transformer.wte.weight = torch.nn.Parameter(custom_weight)
