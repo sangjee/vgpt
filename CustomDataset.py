@@ -50,7 +50,7 @@ class CustomDataset(Dataset):
               mask = _get_image(hf.get(fName),mode='mask')
         image_3d[:,:,idx] = img*mask
     hf.close()
-    image_3d = self.transforms(image=image_3d)['image']
+    # image_3d = self.transforms(image=image_3d)['image']
     item['image'] = torch.tensor(image_3d).permute(2, 0, 1).float()
     # item['image'] = item['image'].reshape(-1,224)
     # item['text'] = self.captions[index]
