@@ -57,7 +57,8 @@ class VisualEncoder(MultiLevelEncoder):
         self.dropout = nn.Dropout(p=self.dropout)
         self.layer_norm = nn.LayerNorm(self.d_model)
         self.projection = nn.Sequential(
-            nn.Conv2d(3, 768, 16, 16),
+            # nn.Conv2d(3, 768, 16, 16),
+            nn.Conv2d(20, 768, 16, 16),
             Rearrange('b e (h) (w) -> b (h w) e')
         )
 
