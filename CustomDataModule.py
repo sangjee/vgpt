@@ -5,6 +5,18 @@ from torch.utils.data import DataLoader
 from CustomDataset import CustomDataset
 from CustomDataset2 import CustomDataset2
 
+from monai.transforms import (
+    LoadImaged,
+    Compose,
+    RandRotated,
+    EnsureChannelFirstd,
+    Resized,
+    ScaleIntensityd,
+    EnsureTyped,
+    Spacingd,
+    Orientationd
+)
+
 class CustomDataModule(pl.LightningDataModule):
     def __init__(self, train_df, val_df, test_df, batch_size, num_workers, tokenizer, mode='train'):
         super().__init__()
@@ -49,9 +61,6 @@ def build_loaders(dataframe, tokenizer, mode):
         dataset = CustomDataset(
             dataframe['image'].values,
             dataframe['caption'].values,
-            dataframe['input_img1'].values,
-            dataframe['input_img2'].values,
-            dataframe['input_img3'].values,
             tokenizer=tokenizer,
             transforms=transforms,
             )
@@ -60,26 +69,45 @@ def build_loaders(dataframe, tokenizer, mode):
         dataset = CustomDataset2(
             dataframe['image'].values,
             dataframe['caption'].values,
-            dataframe['input_img1'].values,
-            dataframe['input_img2'].values,
-            dataframe['input_img3'].values,
             tokenizer=tokenizer,
             transforms=transforms,
             )
         return dataset
   
+# def get_transforms(mode="train"):
+#     if mode == "train":
+#         return A.Compose(
+#             [
+#                 A.Resize(224, 224, always_apply=True),
+#                 A.Normalize(max_pixel_value=255.0, always_apply=True),
+#             ]
+#         )
+#     else:
+#         return A.Compose(
+#             [
+#                 A.Resize(224, 224, always_apply=True),
+#                 A.Normalize(max_pixel_value=255.0, always_apply=True),
+#             ]
+#         )
 def get_transforms(mode="train"):
     if mode == "train":
-        return A.Compose(
-            [
-                A.Resize(224, 224, always_apply=True),
-                A.Normalize(max_pixel_value=255.0, always_apply=True),
-            ]
-        )
+        return Compose([
+            LoadImaged(keys="image"),
+            EnsureChannelFirstd(keys="image"),
+            # RandRotated(keys="image", range_x=np.pi / 12, prob=0.3), 
+            ScaleIntensityd(keys="image"),
+            Spacingd(keys='image',pixdim=(1,1,5)),
+            Resized(keys="image", spatial_size=[224,224,20]),
+            EnsureTyped(keys="image"),
+            Orientationd(keys="image", axcodes="SPL")
+        ])
     else:
-        return A.Compose(
-            [
-                A.Resize(224, 224, always_apply=True),
-                A.Normalize(max_pixel_value=255.0, always_apply=True),
-            ]
-        )
+        return Compose([
+            LoadImaged(keys="image"),
+            EnsureChannelFirstd(keys="image"),
+            ScaleIntensityd(keys="image"),
+            Spacingd(keys='image',pixdim=(1,1,5)),
+            Resized(keys="image", spatial_size=[224,224,20]),
+            EnsureTyped(keys="image"),
+            Orientationd(keys="image", axcodes="SPL")
+        ])

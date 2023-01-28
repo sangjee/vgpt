@@ -255,13 +255,13 @@ if __name__ == '__main__':
     train_path = args.train_data_path
     test_path = args.test_data_path
     val_path = args.val_data_path
-    train_df = pd.read_csv(train_path)
-    test_df = pd.read_csv(test_path)
-    val_df = pd.read_csv(val_path)
+    train_df = pd.read_excel(train_path)
+    test_df = pd.read_excel(test_path)
+    val_df = pd.read_excel(val_path)
 
-    train_df.rename(columns={'image':'image_nii','image_hdf5':'image'},inplace=True)
-    test_df.rename(columns={'image':'image_nii','image_hdf5':'image'},inplace=True)
-    val_df.rename(columns={'image':'image_nii','image_hdf5':'image'},inplace=True)
+    # train_df.rename(columns={'image':'image_nii','image_hdf5':'image'},inplace=True)
+    # test_df.rename(columns={'image':'image_nii','image_hdf5':'image'},inplace=True)
+    # val_df.rename(columns={'image':'image_nii','image_hdf5':'image'},inplace=True)
 
 
     data_module = CustomDataModule(train_df=train_df, val_df=val_df, test_df=test_df, batch_size=args.batch_size, num_workers=args.num_workers, tokenizer=text_field, mode='train')
