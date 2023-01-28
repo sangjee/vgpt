@@ -93,7 +93,7 @@ def get_transforms(mode="train"):
     if mode == "train":
         return Compose([
             LoadImaged(keys="image"),
-            # EnsureChannelFirstd(keys="image"),
+            EnsureChannelFirstd(keys="image"),
             # RandRotated(keys="image", range_x=np.pi / 12, prob=0.3), 
             # ScaleIntensityd(keys="image"),
             # Spacingd(keys='image',pixdim=(1,1,5)),
@@ -104,7 +104,7 @@ def get_transforms(mode="train"):
     else:
         return Compose([
             LoadImaged(keys="image"),
-            # EnsureChannelFirstd(keys="image"),
+            EnsureChannelFirstd(keys="image"),
             # ScaleIntensityd(keys="image"),
             # Spacingd(keys='image',pixdim=(1,1,5)),
             Resized(keys="image", spatial_size=[224,224,20]),
