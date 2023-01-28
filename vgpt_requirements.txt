@@ -29,5 +29,5 @@ scispacy
 tensorflow
 einops
 spacy-download
-monai
+monai==0.9.1
 openpyxl
