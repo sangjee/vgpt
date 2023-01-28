@@ -25,6 +25,5 @@ class CustomDataset2(Dataset):
     image_3d = self.transforms(path)
     item['image'] = torch.tensor(image_3d['image']).squeeze(0)
     # tmp = self.tokenizer.preprocess(self.captions[index])
-    print(item['image'].shape)
     item['text'] = self.captions[index]
     return item
