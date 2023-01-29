@@ -294,7 +294,7 @@ if __name__ == '__main__':
 
     # dict_dataset_train = train_dataset.image_dictionary({'image': image_field, 'text': RawField()})
     
-    dict_dataset_train = build_loaders(train_df, text_field, mode='valid')
+    # dict_dataset_train = build_loaders(train_df, text_field, mode='valid')
     # ref_caps_train = list(train_dataset.text)
     ref_caps_train = []
     # for i in dict_dataset_train:
@@ -305,8 +305,8 @@ if __name__ == '__main__':
     # dict_dataset_val = val_dataset.image_dictionary({'image': image_field, 'text': RawField()})
     # dict_dataset_test = test_dataset.image_dictionary({'image': image_field, 'text': RawField()})
 
-    dict_dataset_val = build_loaders(val_df, text_field, mode='valid')
-    dict_dataset_test = build_loaders(test_df, text_field, mode='valid')
+    # dict_dataset_val = build_loaders(val_df, text_field, mode='valid')
+    # dict_dataset_test = build_loaders(test_df, text_field, mode='valid')
 
 
 
