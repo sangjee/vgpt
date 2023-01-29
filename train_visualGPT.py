@@ -297,9 +297,9 @@ if __name__ == '__main__':
     dict_dataset_train = build_loaders(train_df, text_field, mode='valid')
     # ref_caps_train = list(train_dataset.text)
     ref_caps_train = []
-    for i in dict_dataset_train:
-        ref_caps_train.append(i['text'])
-    cider_train = Cider(PTBTokenizer.tokenize(ref_caps_train))
+    # for i in dict_dataset_train:
+    #     ref_caps_train.append(i['text'])
+    # cider_train = Cider(PTBTokenizer.tokenize(ref_caps_train))
 
 
     # dict_dataset_val = val_dataset.image_dictionary({'image': image_field, 'text': RawField()})
@@ -371,12 +371,12 @@ if __name__ == '__main__':
 
             writer.add_scalar('data/train_loss', train_loss, e)
         else:
-     
-            train_loss, reward, reward_baseline = train_scst(model, dict_dataloader_train, cider_train, text_field,
-                                                                 gpt_optimizer, args)
-            writer.add_scalar('data/train_loss', train_loss, e)
-            writer.add_scalar('data/reward', reward, e)
-            writer.add_scalar('data/reward_baseline', reward_baseline, e)
+            print('-----------self supervised learning end-----------')
+            # train_loss, reward, reward_baseline = train_scst(model, dict_dataloader_train, cider_train, text_field,
+            #                                                      gpt_optimizer, args)
+            # writer.add_scalar('data/train_loss', train_loss, e)
+            # writer.add_scalar('data/reward', reward, e)
+            # writer.add_scalar('data/reward_baseline', reward_baseline, e)
 
         # Validation loss
         val_loss = evaluate_loss(model, dataloader_val, loss_fn, text_field)
