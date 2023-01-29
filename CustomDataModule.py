@@ -99,7 +99,7 @@ def get_transforms(mode="train"):
             Spacingd(keys='image',pixdim=(1,1,5)),
             Resized(keys="image", spatial_size=[224,224,20]),
             EnsureTyped(keys="image"),
-            Orientationd(keys="image", axcodes="SPL")
+            # Orientationd(keys="image", axcodes="SPL")
         ])
     else:
         return Compose([
@@ -109,5 +109,5 @@ def get_transforms(mode="train"):
             Spacingd(keys='image',pixdim=(1,1,5)),
             Resized(keys="image", spatial_size=[224,224,20]),
             EnsureTyped(keys="image"),
-            Orientationd(keys="image", axcodes="SPL")
+            # Orientationd(keys="image", axcodes="SPL")
         ])
