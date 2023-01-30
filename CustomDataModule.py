@@ -109,7 +109,7 @@ def get_transforms2(mode="train", channel=20):
             # RandRotated(keys="image", range_x=np.pi / 12, prob=0.3), 
             ScaleIntensityd(keys="image"),
             Spacingd(keys='image',pixdim=(1,1,5)),
-            Resized(keys="image", spatial_size=[224,224,channel]),
+            Resized(keys="image", spatial_size=[128,128,channel]),
             EnsureTyped(keys="image"),
             # Orientationd(keys="image", axcodes="SPL")
         ])
@@ -119,7 +119,7 @@ def get_transforms2(mode="train", channel=20):
             EnsureChannelFirstd(keys="image"),
             ScaleIntensityd(keys="image"),
             Spacingd(keys='image',pixdim=(1,1,5)),
-            Resized(keys="image", spatial_size=[224,224,channel]),
+            Resized(keys="image", spatial_size=[128,128,channel]),
             EnsureTyped(keys="image"),
             # Orientationd(keys="image", axcodes="SPL")
         ])
