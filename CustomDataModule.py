@@ -3,7 +3,6 @@ import albumentations as A
 from torch.utils.data import DataLoader
 
 from CustomDataset import CustomDataset
-from CustomDataset2 import CustomDataset2
 
 class CustomDataModule(pl.LightningDataModule):
     def __init__(self, train_df, val_df, test_df, batch_size, num_workers, tokenizer, mode='train'):
@@ -44,32 +43,21 @@ class CustomDataModule(pl.LightningDataModule):
             )
 def build_loaders(dataframe, tokenizer, mode):
     transforms = get_transforms(mode=mode)
-
-    if mode == "train":
-        dataset = CustomDataset(
-            dataframe['image'].values,
-            dataframe['caption'].values,
-            dataframe['input_img1'].values,
-            dataframe['input_img2'].values,
-            dataframe['input_img3'].values,
-            tokenizer=tokenizer,
-            transforms=transforms,
-            )
-        return dataset
-    elif mode == "valid":
-        dataset = CustomDataset2(
-            dataframe['image'].values,
-            dataframe['caption'].values,
-            dataframe['input_img1'].values,
-            dataframe['input_img2'].values,
-            dataframe['input_img3'].values,
-            tokenizer=tokenizer,
-            transforms=transforms,
-            )
-        return dataset
+    dataset = CustomDataset(
+        dataframe['image'].values,
+        dataframe['caption'].values,
+        dataframe['input_img1'].values,
+        dataframe['input_img2'].values,
+        dataframe['input_img3'].values,
+        tokenizer=tokenizer,
+        transforms=transforms,
+        mode=mode
+        )
+    return dataset
   
 def get_transforms(mode="train"):
     if mode == "train":
+        # [TODO] add rotate etc...
         return A.Compose(
             [
                 A.Resize(224, 224, always_apply=True),

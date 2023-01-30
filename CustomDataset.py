@@ -7,26 +7,21 @@ import cv2
 import albumentations as A
 
 class CustomDataset(Dataset):
-  def __init__(self, image_filenames, captions, image_input1, image_input2, image_input3, tokenizer, transforms):
+  def __init__(self, image_filenames, captions, image_input1, image_input2, image_input3, tokenizer, transforms, mode):
     self.image_filenames = image_filenames
     self.image_input1 = image_input1
     self.image_input2 = image_input2
     self.image_input3 = image_input3
     self.captions = list(captions)
-    # self.encoded_captions = tokenizer(
-    #     list(captions)
-    # )
+
     self.tokenizer = tokenizer
     self.transforms = transforms
+    self.mode = mode
     
   def __len__(self):
     return len(self.captions)
 
   def __getitem__(self, index: int):
-    # item = {
-    #   key: torch.tensor(values[index])
-    #   for key, values in self.encoded_captions.items()
-    # }
     item = {}
     with h5py.File(self.image_filenames[index], 'r') as hf:
         image1 = _get_image(hf.get(self.image_input1[index]))
@@ -39,10 +34,12 @@ class CustomDataset(Dataset):
     hf.close()
     image_3d = self.transforms(image=image_3d)['image']
     item['image'] = torch.tensor(image_3d).permute(2, 0, 1).float()
-    # item['image'] = item['image'].reshape(-1,224)
-    # item['text'] = self.captions[index]
-    tmp = self.tokenizer.preprocess(self.captions[index])
-    item['text'] = self.tokenizer.process(tmp)
+
+    if self.mode == 'train':
+      tmp = self.tokenizer.preprocess(self.captions[index])
+      item['text'] = self.tokenizer.process(tmp)
+    else :
+      item['text'] = self.captions[index]
 
     return item
 

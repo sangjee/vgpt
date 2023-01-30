@@ -2,7 +2,6 @@ import imp
 import random
 
 from CustomDataModule import CustomDataModule, build_loaders
-from CustomCollator import CustomCollator
 from transformers import GPT2Tokenizer
 
 from data import ImageDetectionsField, TextField, RawField
