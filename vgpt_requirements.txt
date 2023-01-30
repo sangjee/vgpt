@@ -29,3 +29,6 @@ scispacy
 tensorflow-gpu
 einops
 spacy-download
+monai
+openpyxl
+nibabel
