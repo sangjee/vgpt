@@ -275,7 +275,7 @@ if __name__ == '__main__':
     # dataset = COCO(image_field, text_field, train_df, test_df, val_df)
     # train_dataset, val_dataset, test_dataset = dataset.splits
 
-    train_dataset = build_loaders(train_df, text_field, mode='train', d_type=data_type)
+    train_dataset = build_loaders(train_df, text_field, mode='train', d_type=data_type, channel=args.data_channel)
 
     if not os.path.isfile('vocab_%s.pkl' % args.exp_name):
         print("Building vocabulary")
@@ -290,7 +290,7 @@ if __name__ == '__main__':
     encoder = VisualEncoder(args.encoder_layer, 0, channel=args.data_channel, attention_module=ScaledDotProductAttention)
     model = Transformer_visualgpt(text_field.vocab.stoi['<?'], encoder, args.gpt_model_type, args.decoder_layer,tau=args.tau).to(device)
     
-    dict_dataset_train = build_loaders(train_df, text_field, mode='valid', d_type=data_type)
+    dict_dataset_train = build_loaders(train_df, text_field, mode='valid', d_type=data_type, channel=args.data_channel)
     # ref_caps_train = []
     # for i in dict_dataset_train:
     #     ref_caps_train.append(i['text'])
