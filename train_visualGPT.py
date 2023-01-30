@@ -290,24 +290,12 @@ if __name__ == '__main__':
     # Model and dataloaders
     encoder = VisualEncoder(args.encoder_layer, 0, attention_module=ScaledDotProductAttention)
     model = Transformer_visualgpt(text_field.vocab.stoi['<?'], encoder, args.gpt_model_type, args.decoder_layer,tau=args.tau).to(device)
-
-    # dict_dataset_train = train_dataset.image_dictionary({'image': image_field, 'text': RawField()})
     
     dict_dataset_train = build_loaders(train_df, text_field, mode='valid')
-    # ref_caps_train = list(train_dataset.text)
     ref_caps_train = []
     for i in dict_dataset_train:
         ref_caps_train.append(i['text'])
     cider_train = Cider(PTBTokenizer.tokenize(ref_caps_train))
-
-
-    # dict_dataset_val = val_dataset.image_dictionary({'image': image_field, 'text': RawField()})
-    # dict_dataset_test = test_dataset.image_dictionary({'image': image_field, 'text': RawField()})
-
-    dict_dataset_val = build_loaders(val_df, text_field, mode='valid')
-    dict_dataset_test = build_loaders(test_df, text_field, mode='valid')
-
-
 
     total_step_number = int(len(train_dataset)/(args.batch_size * args.gradient_accumulation_steps)*100)
  
@@ -318,9 +306,6 @@ if __name__ == '__main__':
   
     elif args.optimizer_type =="adam":
         optimizer = Adam(model.parameters(), lr = args.lr)
-
- 
-
 
     loss_fn = NLLLoss(ignore_index=text_field.vocab.stoi['+='])
     use_rl = False
@@ -351,14 +336,6 @@ if __name__ == '__main__':
 
     # use_rl=True
     for e in range(start_epoch, start_epoch + args.epoch):
-        # dataloader_train = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.workers,
-        #                               drop_last=True)
-        # dataloader_val = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.workers)
-        # dict_dataloader_train = DataLoader(dict_dataset_train, batch_size=args.batch_size // 5, shuffle=True,
-        #                                    num_workers=args.workers)
-        # dict_dataloader_val = DataLoader(dict_dataset_val, batch_size=args.batch_size // 5)
-        # dict_dataloader_test = DataLoader(dict_dataset_test, batch_size=args.batch_size // 5)
-
         dataloader_train = data_module.train_dataloader()
         dataloader_val = data_module.val_dataloader()
         dict_dataloader_train = data_module2.train_dataloader()
@@ -433,8 +410,7 @@ if __name__ == '__main__':
                 use_rl = True
                 switch_to_rl = True
                 patience = 0
-
-
+                
                 gpt_optimizer = AdamW(model.parameters(),
                                      lr = args.reinforcement_lr,betas=(0.9, 0.999), eps=1e-8)
 
