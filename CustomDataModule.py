@@ -57,19 +57,30 @@ class CustomDataModule(pl.LightningDataModule):
 def build_loaders(dataframe, tokenizer, mode, d_type):
     if d_type=='ct':
         transforms = get_transforms2(mode=mode)
+        dataset = CustomDataset(
+            dataframe['image'].values,
+            dataframe['caption'].values,
+            None,
+            None,
+            None,
+            tokenizer=tokenizer,
+            transforms=transforms,
+            mode=mode,
+            d_type=d_type
+            )
     else :
         transforms = get_transforms(mode=mode)
-    dataset = CustomDataset(
-        dataframe['image'].values,
-        dataframe['caption'].values,
-        dataframe['input_img1'].values,
-        dataframe['input_img2'].values,
-        dataframe['input_img3'].values,
-        tokenizer=tokenizer,
-        transforms=transforms,
-        mode=mode,
-        d_type=d_type
-        )
+        dataset = CustomDataset(
+            dataframe['image'].values,
+            dataframe['caption'].values,
+            dataframe['input_img1'].values,
+            dataframe['input_img2'].values,
+            dataframe['input_img3'].values,
+            tokenizer=tokenizer,
+            transforms=transforms,
+            mode=mode,
+            d_type=d_type
+            )
     return dataset
   
 def get_transforms(mode="train"):
