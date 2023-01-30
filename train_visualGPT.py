@@ -261,12 +261,12 @@ if __name__ == '__main__':
         val_df.rename(columns={'image':'image_nii','image_hdf5':'image'},inplace=True)
 
 
-    data_module = CustomDataModule(train_df=train_df, val_df=val_df, test_df=test_df, batch_size=args.batch_size, num_workers=args.num_workers, tokenizer=text_field, mode='train', d_type=data_type)
+    data_module = CustomDataModule(train_df=train_df, val_df=val_df, test_df=test_df, batch_size=args.batch_size, num_workers=args.num_workers, tokenizer=text_field, mode='train', d_type=data_type, channel=args.data_channel)
     data_module.prepare_data()
     data_module.setup()
 
     
-    data_module2 = CustomDataModule(train_df=train_df, val_df=val_df, test_df=test_df, batch_size=args.batch_size, num_workers=args.num_workers, tokenizer=text_field, mode='valid', d_type=data_type)
+    data_module2 = CustomDataModule(train_df=train_df, val_df=val_df, test_df=test_df, batch_size=args.batch_size, num_workers=args.num_workers, tokenizer=text_field, mode='valid', d_type=data_type, channel=args.data_channel)
     data_module2.prepare_data()
     data_module2.setup()
 

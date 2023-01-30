@@ -13,7 +13,8 @@
   * normal (22개) : Dicom파일
   * 강원대학교 병원.xlsx : Tabular data
   * 영상 판독지 요청 자료.xls : disease/normal 판독문 및 환자 정보 => 정제되지 않음, 검토 필요한 데이터
-3. CT data (뇌출혈 데이터)
+### CT 뇌출혈 데이터
+1. CT data
   * CC_case (3,222개) : 춘천성심병원 CT 데이터, Dicom파일
   * HL_case (7,307개) : 평촌성심병원 CT 데이터, Dicom파일
   * HL_normal (30,576개) : 평촌성심병원 CT normal 데이터, Dicom파일
@@ -22,41 +23,54 @@
   * ich_chuncheon.xlsx : 춘천성심병원 CT 판독문
   * normal_chuncheon.xlsx :  평촌성심병원 CT normal 판독문
     - 판독문 3개 모두 CT데이터와 id가 일부 match되지 않음 (23.01.31 기준) => 김철호 교수님께 문의
+    - case 판독문의 경우 ich(뇌출혈)=1인 데이터 사용
+    - nomral 판독문의 경우 ich(뇌출혈)=0인 데이터 사용
+    - series=1, new_series=1인 데이터 사용 => series=ct찍은 순서(여러 번 찍은 환자도 있기 때문)
+    - id = ct data 폴더명과 일치, 환자 번호
 
 ## Train the model
 data_type = ct / mri 두가지 중 하나로 설정
 data_channel = mri일 경우 3으로 설정, ct일 경우 원하는 채널 수 만큼 설정
+
+**visualgpt gitlab 코드를 참고하여 데이터 부분만 변경하여 사용, 아래 gitlab주소 활용할 것**
+[주요 추가,변경 부분]
+- CustomDataModule.py
+- CustomDataset.py
+  - mri 데이터의 경우 mask 기준 가장 병변이 많은 slice 3개를 dicom 파일에서 뽑아 사용
+  - CT데이터의 경우 dicom 파일을 nifti파일로 변환하여 사용
+
 ```
-python train_visualGPT.py  --exp_name visualGPT \
-                       --train_data_path /home/lab/sangjee/strok/data/ctdata_train.csv \
-                       --test_data_path /home/lab/sangjee/strok/data/ctdata_test.csv \
-                       --val_data_path /home/lab/sangjee/strok/data/ctdata_val.csv \
-                       --epoch 100 \
-                       --patience 5 \
-                       --batch_size 16 \
-                       --eval_batch_size 16 \
-                       --num_workers 4 \
-                       --head 12 \
-                       --logs_folder /home/lab/sangjee/strok/tensorlog \
-                       --random_seed 42 \
-                       --gpt_model_type gpt \
-                       --lr 1e-4 \
-                       --log_file /home/lab/sangjee/strok/log/visualGPT.txt \
-                       --gradient_accumulation_steps 1 \
-                       --num_train_epochs 3.0 \
-                       --optimizer_type adamw \
-                       --max_grad_norm 1.0 \
-                       --train_percentage 1.0 \
-                       --reinforcement_lr 1e-5 \
-                       --decoder_layer 12 \
-                       --encoder_layer 3 \
-                       --tau 0.0 \
-                       --data_type ct \
-                       --data_channel 20
+python train_visualGPT.py  --exp_name visualGPT
+  --train_data_path /home/lab/sangjee/strok/data/ctdata_train.csv
+  --test_data_path /home/lab/sangjee/strok/data/ctdata_test.csv
+  --val_data_path /home/lab/sangjee/strok/data/ctdata_val.csv
+  --epoch 100
+  --patience 5
+  --batch_size 16
+  --eval_batch_size 16
+  --num_workers 4
+  --head 12
+  --logs_folder /home/lab/sangjee/strok/tensorlog
+  --random_seed 42
+  --gpt_model_type gpt
+  --lr 1e-4
+  --log_file /home/lab/sangjee/strok/log/visualGPT.txt
+  --gradient_accumulation_steps 1
+  --num_train_epochs 3.0
+  --optimizer_type adamw
+  --max_grad_norm 1.0
+  --train_percentage 1.0
+  --reinforcement_lr 1e-5
+  --decoder_layer 12
+  --encoder_layer 3
+  --tau 0.0
+  --data_type ct
+  --data_channel 20
 ```
 
 
 ## VisualGPT
+[gitlab](https://github.com/Vision-CAIR/VisualGPT)
 
 Our Paper [VisualGPT: Data-efficient Adaptation of Pretrained Language Models for Image Captioning](https://arxiv.org/abs/2102.10407)
 

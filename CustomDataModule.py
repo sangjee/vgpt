@@ -17,7 +17,7 @@ from monai.transforms import (
 )
 
 class CustomDataModule(pl.LightningDataModule):
-    def __init__(self, train_df, val_df, test_df, batch_size, num_workers, tokenizer, mode='train', d_type='mri'):
+    def __init__(self, train_df, val_df, test_df, batch_size, num_workers, tokenizer, mode='train', d_type='mri', channel=20):
         super().__init__()
         self.batch_size = batch_size
         self.train_df = train_df
@@ -27,11 +27,12 @@ class CustomDataModule(pl.LightningDataModule):
         self.tokenizer = tokenizer
         self.mode = mode
         self.d_type = d_type
+        self.channel = channel
 
     def setup(self, stage=None):
-        self.train_dataset = build_loaders(self.train_df, self.tokenizer, self.mode, self.d_type)
-        self.val_dataset = build_loaders(self.val_df, self.tokenizer, self.mode, self.d_type)
-        self.test_dataset = build_loaders(self.test_df, self.tokenizer, self.mode, self.d_type)
+        self.train_dataset = build_loaders(self.train_df, self.tokenizer, self.mode, self.d_type, self.channel)
+        self.val_dataset = build_loaders(self.val_df, self.tokenizer, self.mode, self.d_type, self.channel)
+        self.test_dataset = build_loaders(self.test_df, self.tokenizer, self.mode, self.d_type, self.channel)
         
     def train_dataloader(self):
         return DataLoader(
@@ -54,9 +55,9 @@ class CustomDataModule(pl.LightningDataModule):
             batch_size=self.batch_size,
             num_workers=self.num_workers
             )
-def build_loaders(dataframe, tokenizer, mode, d_type):
+def build_loaders(dataframe, tokenizer, mode, d_type, channel):
     if d_type=='ct':
-        transforms = get_transforms2(mode=mode)
+        transforms = get_transforms2(mode=mode, channel=channel)
         dataset = CustomDataset(
             dataframe['image'].values,
             dataframe['caption'].values,
@@ -100,7 +101,7 @@ def get_transforms(mode="train"):
             ]
         )
 
-def get_transforms2(mode="train"):
+def get_transforms2(mode="train", channel=20):
     if mode == "train":
         return Compose([
             LoadImaged(keys="image"),
@@ -108,7 +109,7 @@ def get_transforms2(mode="train"):
             # RandRotated(keys="image", range_x=np.pi / 12, prob=0.3), 
             ScaleIntensityd(keys="image"),
             Spacingd(keys='image',pixdim=(1,1,5)),
-            Resized(keys="image", spatial_size=[224,224,20]),
+            Resized(keys="image", spatial_size=[224,224,channel]),
             EnsureTyped(keys="image"),
             # Orientationd(keys="image", axcodes="SPL")
         ])
@@ -118,7 +119,7 @@ def get_transforms2(mode="train"):
             EnsureChannelFirstd(keys="image"),
             ScaleIntensityd(keys="image"),
             Spacingd(keys='image',pixdim=(1,1,5)),
-            Resized(keys="image", spatial_size=[224,224,20]),
+            Resized(keys="image", spatial_size=[224,224,channel]),
             EnsureTyped(keys="image"),
             # Orientationd(keys="image", axcodes="SPL")
         ])
