@@ -29,7 +29,7 @@ class CustomDataset(Dataset):
       path = {'image':self.image_filenames[index]}
       image_3d = self.transforms(path)
       item['image']=(image_3d['image']).squeeze(0).permute(2, 0, 1).float()
-      item['image'] = torch.tensor(item['image'])
+      item['image'] = (item['image']).clone().detach()
     else :
       with h5py.File(self.image_filenames[index], 'r') as hf:
           image1 = _get_image(hf.get(self.image_input1[index]))
