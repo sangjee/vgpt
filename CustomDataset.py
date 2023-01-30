@@ -23,7 +23,8 @@ class CustomDataset(Dataset):
     item = {}
     path = {'image':self.image_filenames[index]}
     image_3d = self.transforms(path)
-    item['image'] = torch.tensor(image_3d['image']).squeeze(0).permute(2, 0, 1).float()
+    item['image']=(image_3d['image']).squeeze(0).permute(2, 0, 1).float()
+    item['image'] = (item['image']).clone().detach()
     # item['image'] = item['image'].reshape(-1,224)
     # item['text'] = self.captions[index]
     tmp = self.tokenizer.preprocess(self.captions[index])
