@@ -51,13 +51,13 @@ class MultiLevelEncoder(nn.Module):
 def gelu(x):
     return 0.5 * x * (1 + torch.tanh(math.sqrt(2 / math.pi) * (x + 0.044715 * torch.pow(x, 3))))
 class VisualEncoder(MultiLevelEncoder):
-    def __init__(self, N, padding_idx, d_in=768, **kwargs):
+    def __init__(self, N, padding_idx, channel=3, d_in=768, **kwargs):
         super(VisualEncoder, self).__init__(N, padding_idx, **kwargs)
         self.fc = nn.Linear(d_in, self.d_model)
         self.dropout = nn.Dropout(p=self.dropout)
         self.layer_norm = nn.LayerNorm(self.d_model)
         self.projection = nn.Sequential(
-            nn.Conv2d(3, 768, 16, 16),
+            nn.Conv2d(channel, 768, 16, 16),
             Rearrange('b e (h) (w) -> b (h w) e')
         )
 

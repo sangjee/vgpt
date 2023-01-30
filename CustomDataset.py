@@ -7,7 +7,7 @@ import cv2
 import albumentations as A
 
 class CustomDataset(Dataset):
-  def __init__(self, image_filenames, captions, image_input1, image_input2, image_input3, tokenizer, transforms, mode):
+  def __init__(self, image_filenames, captions, image_input1, image_input2, image_input3, tokenizer, transforms, mode, d_type):
     self.image_filenames = image_filenames
     self.image_input1 = image_input1
     self.image_input2 = image_input2
@@ -17,23 +17,30 @@ class CustomDataset(Dataset):
     self.tokenizer = tokenizer
     self.transforms = transforms
     self.mode = mode
+    self.d_type = d_type
     
   def __len__(self):
     return len(self.captions)
 
   def __getitem__(self, index: int):
     item = {}
-    with h5py.File(self.image_filenames[index], 'r') as hf:
-        image1 = _get_image(hf.get(self.image_input1[index]))
-        image2 = _get_image(hf.get(self.image_input2[index]))
-        image3 = _get_image(hf.get(self.image_input3[index]))
-        image_3d = np.zeros((256, 256, 3),dtype=np.uint8)
-        image_3d[:,:,0] = image1
-        image_3d[:,:,1] = image2
-        image_3d[:,:,2] = image3
-    hf.close()
-    image_3d = self.transforms(image=image_3d)['image']
-    item['image'] = torch.tensor(image_3d).permute(2, 0, 1).float()
+
+    if self.d_type == 'ct':
+      path = {'image':self.image_filenames[index]}
+      image_3d = self.transforms(path)
+      item['image'] = torch.tensor(image_3d['image']).squeeze(0)
+    else :
+      with h5py.File(self.image_filenames[index], 'r') as hf:
+          image1 = _get_image(hf.get(self.image_input1[index]))
+          image2 = _get_image(hf.get(self.image_input2[index]))
+          image3 = _get_image(hf.get(self.image_input3[index]))
+          image_3d = np.zeros((256, 256, 3),dtype=np.uint8)
+          image_3d[:,:,0] = image1
+          image_3d[:,:,1] = image2
+          image_3d[:,:,2] = image3
+      hf.close()
+      image_3d = self.transforms(image=image_3d)['image']
+      item['image'] = torch.tensor(image_3d).permute(2, 0, 1).float()
 
     if self.mode == 'train':
       tmp = self.tokenizer.preprocess(self.captions[index])

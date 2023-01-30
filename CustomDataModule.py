@@ -4,8 +4,20 @@ from torch.utils.data import DataLoader
 
 from CustomDataset import CustomDataset
 
+from monai.transforms import (
+    LoadImaged,
+    Compose,
+    RandRotated,
+    EnsureChannelFirstd,
+    Resized,
+    ScaleIntensityd,
+    EnsureTyped,
+    Spacingd,
+    Orientationd
+)
+
 class CustomDataModule(pl.LightningDataModule):
-    def __init__(self, train_df, val_df, test_df, batch_size, num_workers, tokenizer, mode='train'):
+    def __init__(self, train_df, val_df, test_df, batch_size, num_workers, tokenizer, mode='train', d_type='mri'):
         super().__init__()
         self.batch_size = batch_size
         self.train_df = train_df
@@ -14,11 +26,12 @@ class CustomDataModule(pl.LightningDataModule):
         self.num_workers = num_workers
         self.tokenizer = tokenizer
         self.mode = mode
+        self.d_type = d_type
 
     def setup(self, stage=None):
-        self.train_dataset = build_loaders(self.train_df, self.tokenizer, self.mode)
-        self.val_dataset = build_loaders(self.val_df, self.tokenizer, self.mode)
-        self.test_dataset = build_loaders(self.test_df, self.tokenizer, self.mode)
+        self.train_dataset = build_loaders(self.train_df, self.tokenizer, self.mode, self.d_type)
+        self.val_dataset = build_loaders(self.val_df, self.tokenizer, self.mode, self.d_type)
+        self.test_dataset = build_loaders(self.test_df, self.tokenizer, self.mode, self.d_type)
         
     def train_dataloader(self):
         return DataLoader(
@@ -41,8 +54,11 @@ class CustomDataModule(pl.LightningDataModule):
             batch_size=self.batch_size,
             num_workers=self.num_workers
             )
-def build_loaders(dataframe, tokenizer, mode):
-    transforms = get_transforms(mode=mode)
+def build_loaders(dataframe, tokenizer, mode, d_type):
+    if d_type=='ct':
+        transforms = get_transforms2(mode=mode)
+    else :
+        transforms = get_transforms(mode=mode)
     dataset = CustomDataset(
         dataframe['image'].values,
         dataframe['caption'].values,
@@ -51,7 +67,8 @@ def build_loaders(dataframe, tokenizer, mode):
         dataframe['input_img3'].values,
         tokenizer=tokenizer,
         transforms=transforms,
-        mode=mode
+        mode=mode,
+        d_type=d_type
         )
     return dataset
   
@@ -71,3 +88,26 @@ def get_transforms(mode="train"):
                 A.Normalize(max_pixel_value=255.0, always_apply=True),
             ]
         )
+
+def get_transforms2(mode="train"):
+    if mode == "train":
+        return Compose([
+            LoadImaged(keys="image"),
+            EnsureChannelFirstd(keys="image"),
+            # RandRotated(keys="image", range_x=np.pi / 12, prob=0.3), 
+            ScaleIntensityd(keys="image"),
+            Spacingd(keys='image',pixdim=(1,1,5)),
+            Resized(keys="image", spatial_size=[224,224,20]),
+            EnsureTyped(keys="image"),
+            # Orientationd(keys="image", axcodes="SPL")
+        ])
+    else:
+        return Compose([
+            LoadImaged(keys="image"),
+            EnsureChannelFirstd(keys="image"),
+            ScaleIntensityd(keys="image"),
+            Spacingd(keys='image',pixdim=(1,1,5)),
+            Resized(keys="image", spatial_size=[224,224,20]),
+            EnsureTyped(keys="image"),
+            # Orientationd(keys="image", axcodes="SPL")
+        ])

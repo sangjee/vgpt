@@ -2,14 +2,11 @@ import imp
 import random
 
 from CustomDataModule import CustomDataModule, build_loaders
-from transformers import GPT2Tokenizer
 
-from data import ImageDetectionsField, TextField, RawField
-from data import COCO
-from torch.utils.data import DataLoader
+from data import ImageDetectionsField, TextField
 import evaluation
 from evaluation import PTBTokenizer, Cider
-from models.transformer import Transformer_visualgpt, VisualEncoder, ScaledDotProductAttentionMemory, ScaledDotProductAttention
+from models.transformer import Transformer_visualgpt, VisualEncoder, ScaledDotProductAttention
 import torch
 from torch.optim import Adam
 from torch.nn import NLLLoss
@@ -21,18 +18,14 @@ import itertools
 import multiprocessing
 from shutil import copyfile
 import logging
-import json
 
 from transformers import AdamW
-from torch import nn
 
 
 from models.captioning_model import CaptioningModel
 
 import pandas as pd
-import spacy
 import os
-import sys
 
 def evaluate_loss(model, dataloader, loss_fn, text_field):
     # Validation loss
@@ -212,6 +205,8 @@ if __name__ == '__main__':
     parser.add_argument("--decoder_layer", type= int, default = 12)
     parser.add_argument("--encoder_layer",type=int, default=3)
     parser.add_argument("--tau",type=float, default = 0.0)
+    parser.add_argument("--data_type", type= str, default = "mri")
+    parser.add_argument("--data_channel",type=int, default = 3)
 
     args = parser.parse_args()
 
@@ -250,7 +245,9 @@ if __name__ == '__main__':
     # Pipeline for text
     text_field = TextField(init_token='<?', eos_token='<|endoftext|>', fix_length=55, lower=True, tokenize='spacy',
                            remove_punctuation=True, nopoints=False)
-                           
+
+    data_type = args.data_type
+
     train_path = args.train_data_path
     test_path = args.test_data_path
     val_path = args.val_data_path
@@ -263,12 +260,12 @@ if __name__ == '__main__':
     val_df.rename(columns={'image':'image_nii','image_hdf5':'image'},inplace=True)
 
 
-    data_module = CustomDataModule(train_df=train_df, val_df=val_df, test_df=test_df, batch_size=args.batch_size, num_workers=args.num_workers, tokenizer=text_field, mode='train')
+    data_module = CustomDataModule(train_df=train_df, val_df=val_df, test_df=test_df, batch_size=args.batch_size, num_workers=args.num_workers, tokenizer=text_field, mode='train', d_type=data_type)
     data_module.prepare_data()
     data_module.setup()
 
     
-    data_module2 = CustomDataModule(train_df=train_df, val_df=val_df, test_df=test_df, batch_size=args.batch_size, num_workers=args.num_workers, tokenizer=text_field, mode='valid')
+    data_module2 = CustomDataModule(train_df=train_df, val_df=val_df, test_df=test_df, batch_size=args.batch_size, num_workers=args.num_workers, tokenizer=text_field, mode='valid', d_type=data_type)
     data_module2.prepare_data()
     data_module2.setup()
 
@@ -277,7 +274,7 @@ if __name__ == '__main__':
     # dataset = COCO(image_field, text_field, train_df, test_df, val_df)
     # train_dataset, val_dataset, test_dataset = dataset.splits
 
-    train_dataset = build_loaders(train_df, text_field, mode='train')
+    train_dataset = build_loaders(train_df, text_field, mode='train', d_type=data_type)
 
     if not os.path.isfile('vocab_%s.pkl' % args.exp_name):
         print("Building vocabulary")
@@ -288,10 +285,11 @@ if __name__ == '__main__':
 
 
     # Model and dataloaders
-    encoder = VisualEncoder(args.encoder_layer, 0, attention_module=ScaledDotProductAttention)
+
+    encoder = VisualEncoder(args.encoder_layer, 0, channel=args.data_channel, attention_module=ScaledDotProductAttention)
     model = Transformer_visualgpt(text_field.vocab.stoi['<?'], encoder, args.gpt_model_type, args.decoder_layer,tau=args.tau).to(device)
     
-    dict_dataset_train = build_loaders(train_df, text_field, mode='valid')
+    dict_dataset_train = build_loaders(train_df, text_field, mode='valid', d_type=data_type)
     ref_caps_train = []
     for i in dict_dataset_train:
         ref_caps_train.append(i['text'])
@@ -410,7 +408,7 @@ if __name__ == '__main__':
                 use_rl = True
                 switch_to_rl = True
                 patience = 0
-                
+
                 gpt_optimizer = AdamW(model.parameters(),
                                      lr = args.reinforcement_lr,betas=(0.9, 0.999), eps=1e-8)
 
