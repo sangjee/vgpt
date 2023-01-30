@@ -49,22 +49,23 @@
       - IXI
 9. visualGPT 적용
     1. visualGPT Review
-      - Encoder-decoder 구조
-      - 적은 양의 학습 데이터를 가지고 성능을 달성함
-      - IU x-ray data의 SOTA 성능을 달성함
+        - Encoder-decoder 구조
+        - 적은 양의 학습 데이터를 가지고 성능을 달성함
+        - IU x-ray data의 SOTA 성능을 달성함
     2. gpt2 - pretraining with hallym data
-      - 한림대 vocab을 사용하여 pretraining
-      - hallym data 판독문과 embedding용으로 제공해준 판독문을 사용하여 pretraining
-      - Hallym data 고유 단어 : 456
-      - Embedding용 고유 단어 : 3968  => hallym data와 중복되는 단어 293개
-      - Hallym data : vocab size = 1,255
-      - 기존 gpt2가 성능이 더 좋음
+        - 한림대 vocab을 사용하여 pretraining
+        - hallym data 판독문과 embedding용으로 제공해준 판독문을 사용하여 pretraining
+        - Hallym data 고유 단어 : 456
+        - Embedding용 고유 단어 : 3968  => hallym data와 중복되는 단어 293개
+        - Hallym data : vocab size = 1,255
+        - 기존 gpt2가 성능이 더 좋음
     3. masked 이미지 사용
-      - Mask 기준 영역만 추출하여 사용
-      - 20개의 MRI 단층 영상 사용
-      - Mask 크기 기준 top 20개 사용
-      - 0.03~0.04의 성능 향상이 있음
-    4. CT data 사용
+        - Mask 기준 영역만 추출하여 사용
+        - 20개의 MRI 단층 영상 사용
+        - Mask 크기 기준 top 20개 사용
+        - 0.03~0.04의 성능 향상이 있음
+    4. 추가 데이터 확보
+    5. CT data 사용
 
 
 ## Data
