@@ -37,8 +37,20 @@ data_channel = mri일 경우 3으로 설정, ct일 경우 원하는 채널 수 �
 [주요 추가,변경 부분]
 - CustomDataModule.py
 - CustomDataset.py
-  - mri 데이터의 경우 mask 기준 가장 병변이 많은 slice 3개를 dicom 파일에서 뽑아 사용
+  - mri 데이터의 경우 mask 기준 가장 병변이 많은 slice 3개를 dicom 파일에서 뽑아 사용, dicom을 hdf5로 변환하여 사용
   - CT데이터의 경우 dicom 파일을 nifti파일로 변환하여 사용
+
+[train data 활용 예시 - mri]
+|caption|image|input_img1|input_img2|input_img3|
+|------|---|---|---|---|
+|focal small diffusion restriction|/data/hdf5_hallym/train/HALLYM_CC_0391.hdf5|input_00000010|input_00000029|input_00000016|
+|multiple diffusion restriction|/data/hdf5_hallym/train/HALLYM_CC_0214.hdf5|input_00000010|input_00000011|input_00000014|
+
+[train data 활용 예시 - ct]
+|caption|image|
+|------|---|
+|No demonstrable abnormal finding.|/data/nifti/HL_case/104634/104634.nii.gz|
+|Left basal ganglia intracerebral hemorrhage|/data/nifti/CC_case/2085/2085.nii.gz|
 
 ```
 python train_visualGPT.py  --exp_name visualGPT
