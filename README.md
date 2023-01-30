@@ -52,6 +52,7 @@ data_channel = mri일 경우 3으로 설정, ct일 경우 원하는 채널 수 �
 |No demonstrable abnormal finding.|/data/nifti/HL_case/104634/104634.nii.gz|
 |Left basal ganglia intracerebral hemorrhage|/data/nifti/CC_case/2085/2085.nii.gz|
 
+**[train]**
 ```
 python train_visualGPT.py  --exp_name visualGPT
   --train_data_path /home/lab/sangjee/strok/data/ctdata_train.csv
