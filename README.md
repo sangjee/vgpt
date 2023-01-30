@@ -32,7 +32,7 @@
 data_type = ct / mri 두가지 중 하나로 설정
 data_channel = mri일 경우 3으로 설정, ct일 경우 원하는 채널 수 만큼 설정
 
-**visualgpt gitlab 코드를 참고하여 데이터 부분만 변경하여 사용, 아래 gitlab주소 활용할 것**
+**visualgpt gitlab 코드를 참고하여 데이터 부분만 변경하여 사용, 아래 gitlab주소 활용할 것**\n
 [주요 추가,변경 부분]
 - CustomDataModule.py
 - CustomDataset.py
