@@ -158,9 +158,6 @@ python train_visualGPT.py  --exp_name visualGPT
 
 Our Paper [VisualGPT: Data-efficient Adaptation of Pretrained Language Models for Image Captioning](https://arxiv.org/abs/2102.10407)
 
-### Main Architecture of Our VisualGPT
-![image](images/final_architecture.jpg)
-
 
 ### Download the GPT-2 pretrained weights
 ```
