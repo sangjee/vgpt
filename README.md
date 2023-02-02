@@ -85,19 +85,19 @@
 ## Data
 ### DWI 뇌경색 데이터
 1. hallym data
-    * disease (1,200개) : 뇌경색 dwi data, Dicom파일 => (저장 위치 박인서 연구원에게 문의)
-    * normal (100개) : dwi data, Dicom파일 => (저장 위치 박인서 연구원에게 문의)
-    * mr_txt.xlsx : disease/normal 판독문 및 환자 정보 => (저장 위치(지오비전 학습 서버) : /data-1/lab/inseo/1tbdata 폴더에 있음)
-    * hallym_Brain MRI report.xls : embedding용 mri 판독문 모음 => (저장 위치(지오비전 학습 서버) : /data-1/lab/inseo/1tbdata 폴더에 있음)
-    * 데이터중심병원(3520개) : 평촌 뇌경색 DWI 데이터, 판독문 및 anotation 파일 없음(23.01.31 기준)  => (저장 위치(지오비전 학습 서버) : /data-1/lab/inseo/1tbdata 폴더에 있음)
+    * disease (1,200개) : 뇌경색 dwi data, Dicom파일 => (저장 위치 : 박인서 연구원에게 문의)
+    * normal (100개) : dwi data, Dicom파일 => (저장 위치 : 박인서 연구원에게 문의)
+    * mr_txt.xlsx : disease/normal 판독문 및 환자 정보 => (저장 위치 : (지오비전 학습 서버) /data-1/lab/inseo/1tbdata 폴더에 있음)
+    * hallym_Brain MRI report (embedding 용).xls : embedding용 mri 판독문 모음 => (저장 위치 : (지오비전 학습 서버) /data-1/lab/inseo/1tbdata 폴더에 있음)
+    * 데이터중심병원(3520개) : 평촌 뇌경색 DWI 데이터, 판독문 및 anotation 파일 없음(23.01.31 기준)  => (저장 위치 : (지오비전 학습 서버) /data-1/lab/inseo/1tbdata 폴더에 있음)
 2. knu data
     * disease (1,182개) : Dicom파일 => (저장 위치 : 박인서 연구원에게 문의)
     * normal (22개) : Dicom파일 => (저장 위치 : 박인서 연구원에게 문의)
     * 강원대학교 병원.xlsx : Tabular data => (저장 위치 : 박인서 연구원에게 문의)
-    * knu_영상 판독지 요청 자료.xls : disease/normal 판독문 및 환자 정보, 정제되지 않은 데이터, 검토 필요한 데이터 => (저장 위치(지오비전 학습 서버) : /data-1/lab/inseo/1tbdata 폴더에 있음)
-    * knu_data_with_mrtxt.xlsx : 영상 판독지 요청 데이터에서 판독문 cloumn만 가져와 tabular data에 합친 자료 => (저장 위치(지오비전 학습 서버) : /data-1/lab/inseo/1tbdata 폴더에 있음)
+    * knu_영상 판독지 요청 자료.xls : disease/normal 판독문 및 환자 정보, 정제되지 않은 데이터, 검토 필요한 데이터 => (저장 위치 : (지오비전 학습 서버) /data-1/lab/inseo/1tbdata 폴더에 있음)
+    * knu_data_with_mrtxt.xlsx : 영상 판독지 요청 데이터에서 판독문 cloumn만 가져와 tabular data에 합친 자료 => (저장 위치 : (지오비전 학습 서버) /data-1/lab/inseo/1tbdata 폴더에 있음)
 ### CT 뇌출혈 데이터
-1. CT data => (저장 위치(지오비전 학습 서버) : /data-1/lab/inseo/1tbdata 폴더에 있음)
+1. CT data => (저장 위치 : (지오비전 학습 서버) /data-1/lab/inseo/1tbdata 폴더에 있음)
     * CC_case (3,222개) : 춘천성심병원 CT 데이터, Dicom파일
     * HL_case (7,307개) : 평촌성심병원 CT 데이터, Dicom파일
     * HL_normal (30,576개) : 평촌성심병원 CT normal 데이터, Dicom파일
