@@ -53,6 +53,8 @@
       - 적은 양의 학습 데이터를 가지고 성능을 달성함
       - IU x-ray data의 SOTA 성능을 달성함
     - visualGPT mri 적용
+      - 병변이 가장많은 slice top 3개 MRI 단층 영상 사용
+      - 이미지 크기: (224,224)사용
       - blue1 : 0.3617
     - gpt2 - pretraining with hallym data
       - 한림대 data용 vocab을 만들어 pretraining
@@ -68,13 +70,15 @@
         - hallym data(hallym vocab)를 gpt2의 weight를 가지고 pretrained : 0.2455
     - masked 이미지 사용
       - Mask 기준 영역만 추출하여 사용
-      - 20개의 MRI 단층 영상 사용
+      - 이미지 크기 : (224,224)사용
+      - 병변이 가장많은 slice top 20개 MRI 단층 영상 사용
       - Mask 크기 기준 top 20개 사용
       - 0.03~0.04의 성능 향상이 있음
       - blue1 : 0.4045
     - 추가 데이터 확보 (평촌 data, CT data)
     - CT data 사용
       - 뇌경색이 아닌 뇌출혈 데이터 => 수집 방식, 판독문 기준, 판독문 내용 등이 초기 목표로 했던 뇌경색과 차이가 있을 수 있음
+      - 이미지 shape : (224,224,20) 사용
       - blue1 : 0.1818
 
 
