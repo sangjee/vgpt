@@ -85,31 +85,31 @@
 ## Data
 ### DWI 뇌경색 데이터
 1. hallym data
-  * disease (1,200개) : 뇌경색 dwi data, Dicom파일 => (저장 위치 박인서 연구원에게 문의)
-  * normal (100개) : dwi data, Dicom파일 => (저장 위치 박인서 연구원에게 문의)
-  * mr_txt.xlsx : disease/normal 판독문 및 환자 정보 => (저장 위치(지오비전 학습 서버) : /data-1/lab/inseo/1tbdata 폴더에 있음)
-  * hallym_Brain MRI report.xls : embedding용 mri 판독문 모음 => (저장 위치(지오비전 학습 서버) : /data-1/lab/inseo/1tbdata 폴더에 있음)
-  * 데이터중심병원(3520개) : 평촌 뇌경색 DWI 데이터, 판독문 및 anotation 파일 없음(23.01.31 기준)  => (저장 위치(지오비전 학습 서버) : /data-1/lab/inseo/1tbdata 폴더에 있음)
+    * disease (1,200개) : 뇌경색 dwi data, Dicom파일 => (저장 위치 박인서 연구원에게 문의)
+    * normal (100개) : dwi data, Dicom파일 => (저장 위치 박인서 연구원에게 문의)
+    * mr_txt.xlsx : disease/normal 판독문 및 환자 정보 => (저장 위치(지오비전 학습 서버) : /data-1/lab/inseo/1tbdata 폴더에 있음)
+    * hallym_Brain MRI report.xls : embedding용 mri 판독문 모음 => (저장 위치(지오비전 학습 서버) : /data-1/lab/inseo/1tbdata 폴더에 있음)
+    * 데이터중심병원(3520개) : 평촌 뇌경색 DWI 데이터, 판독문 및 anotation 파일 없음(23.01.31 기준)  => (저장 위치(지오비전 학습 서버) : /data-1/lab/inseo/1tbdata 폴더에 있음)
 2. knu data
-  * disease (1,182개) : Dicom파일 => (저장 위치 : 박인서 연구원에게 문의)
-  * normal (22개) : Dicom파일 => (저장 위치 : 박인서 연구원에게 문의)
-  * 강원대학교 병원.xlsx : Tabular data => (저장 위치 : 박인서 연구원에게 문의)
-  * knu_영상 판독지 요청 자료.xls : disease/normal 판독문 및 환자 정보, 정제되지 않은 데이터, 검토 필요한 데이터 => (저장 위치(지오비전 학습 서버) : /data-1/lab/inseo/1tbdata 폴더에 있음)
-  * knu_data_with_mrtxt.xlsx : 영상 판독지 요청 데이터에서 판독문 cloumn만 가져와 tabular data에 합친 자료 => (저장 위치(지오비전 학습 서버) : /data-1/lab/inseo/1tbdata 폴더에 있음)
+    * disease (1,182개) : Dicom파일 => (저장 위치 : 박인서 연구원에게 문의)
+    * normal (22개) : Dicom파일 => (저장 위치 : 박인서 연구원에게 문의)
+    * 강원대학교 병원.xlsx : Tabular data => (저장 위치 : 박인서 연구원에게 문의)
+    * knu_영상 판독지 요청 자료.xls : disease/normal 판독문 및 환자 정보, 정제되지 않은 데이터, 검토 필요한 데이터 => (저장 위치(지오비전 학습 서버) : /data-1/lab/inseo/1tbdata 폴더에 있음)
+    * knu_data_with_mrtxt.xlsx : 영상 판독지 요청 데이터에서 판독문 cloumn만 가져와 tabular data에 합친 자료 => (저장 위치(지오비전 학습 서버) : /data-1/lab/inseo/1tbdata 폴더에 있음)
 ### CT 뇌출혈 데이터
 1. CT data => (저장 위치(지오비전 학습 서버) : /data-1/lab/inseo/1tbdata 폴더에 있음)
-  * CC_case (3,222개) : 춘천성심병원 CT 데이터, Dicom파일
-  * HL_case (7,307개) : 평촌성심병원 CT 데이터, Dicom파일
-  * HL_normal (30,576개) : 평촌성심병원 CT normal 데이터, Dicom파일
-    - CC_case, HL_case, HL_normal 모두 Annotation 파일 없음(23.01.31 기준)
-  * hallym_CT (ver 1.0 2022.3.27).xlsx : 평촌성심병원 CT 판독문
-  * ich_chuncheon.xlsx : 춘천성심병원 CT 판독문
-  * normal_chuncheon.xlsx :  평촌성심병원 CT normal 판독문
-    - 판독문 3개 모두 CT데이터와 id가 일부 match되지 않음 (23.01.31 기준) => 김철호 교수님께 문의
-    - case 판독문의 경우 ich(뇌출혈)=1인 데이터 사용
-    - nomral 판독문의 경우 ich(뇌출혈)=0인 데이터 사용
-    - series=1, new_series=1인 데이터 사용 => series=ct찍은 순서(여러 번 찍은 환자도 있기 때문)
-    - id = ct data 폴더명과 일치, 환자 번호
+    * CC_case (3,222개) : 춘천성심병원 CT 데이터, Dicom파일
+    * HL_case (7,307개) : 평촌성심병원 CT 데이터, Dicom파일
+    * HL_normal (30,576개) : 평촌성심병원 CT normal 데이터, Dicom파일
+      - CC_case, HL_case, HL_normal 모두 Annotation 파일 없음(23.01.31 기준)
+    * hallym_CT (ver 1.0 2022.3.27).xlsx : 평촌성심병원 CT 판독문
+    * ich_chuncheon.xlsx : 춘천성심병원 CT 판독문
+    * normal_chuncheon.xlsx :  평촌성심병원 CT normal 판독문
+      - 판독문 3개 모두 CT데이터와 id가 일부 match되지 않음 (23.01.31 기준) => 김철호 교수님께 문의
+      - case 판독문의 경우 ich(뇌출혈)=1인 데이터 사용
+      - nomral 판독문의 경우 ich(뇌출혈)=0인 데이터 사용
+      - series=1, new_series=1인 데이터 사용 => series=ct찍은 순서(여러 번 찍은 환자도 있기 때문)
+      - id = ct data 폴더명과 일치, 환자 번호
 
 ## Train the model
 
