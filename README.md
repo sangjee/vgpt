@@ -52,37 +52,48 @@
       - Encoder-decoder 구조
       - 적은 양의 학습 데이터를 가지고 성능을 달성함
       - IU x-ray data의 SOTA 성능을 달성함
+    - visualGPT mri 적용
+      - blue1 : 0.3617
     - gpt2 - pretraining with hallym data
-      - 한림대 vocab을 사용하여 pretraining
-      - hallym data 판독문과 embedding용으로 제공해준 판독문을 사용하여 pretraining
+      - 한림대 data용 vocab을 만들어 pretraining
       - Hallym data 고유 단어 : 456
-      - Embedding용 고유 단어 : 3968  => hallym data와 중복되는 단어 293개
       - Hallym data : vocab size = 1,255
-      - 기존 gpt2가 성능이 더 좋음
+      - embedding용으로 제공해준 판독문도 사용하려 했으나, embedding용 고유단어와 hallym data의 고유단어 차이가 심해서 사용하지 않음
+        - Embedding용 고유 단어 : 3968  => hallym data와 중복되는 단어 293개
+      - 기존 gpt2가 성능이 더 좋음 (blue1 기준)
+        - 기존(gpt2사용) : 0.3617
+        - 기존 Gpt2에 hallym data로 pretrained 후 사용 : 0.3988
+        - hallym data로 pretrained, hallym vocab 사용 : 0.2875
+        - 기존 gpt2의 vocab과 hallym vocab 사이 동일한 vocab의 embedding weight만 남기고 사용 : 0.2699
+        - hallym data(hallym vocab)를 gpt2의 weight를 가지고 pretrained : 0.2455
     - masked 이미지 사용
       - Mask 기준 영역만 추출하여 사용
       - 20개의 MRI 단층 영상 사용
       - Mask 크기 기준 top 20개 사용
       - 0.03~0.04의 성능 향상이 있음
-    - 추가 데이터 확보 (평촌 data)
+      - blue1 : 0.4045
+    - 추가 데이터 확보 (평촌 data, CT data)
     - CT data 사용
+      - 뇌경색이 아닌 뇌출혈 데이터 => 수집 방식, 판독문 기준, 판독문 내용 등이 초기 목표로 했던 뇌경색과 차이가 있을 수 있음
+      - blue1 : 0.1818
 
 
 ## Data
 ### DWI 뇌경색 데이터
 1. hallym data
-  * disease (1,200개) : 뇌경색 dwi data, Dicom파일
-  * normal (100개) : dwi data, Dicom파일
-  * mr_txt.xlsx : disease/normal 판독문 및 환자 정보
-  * Brain MRI report.xls : embedding용 mri 판독문 모음
-  * 데이터중심병원 : 3520개 => 판독문 및 anotation 파일 없음(23.01.31 기준)
+  * disease (1,200개) : 뇌경색 dwi data, Dicom파일 => (저장 위치 박인서 연구원에게 문의)
+  * normal (100개) : dwi data, Dicom파일 => (저장 위치 박인서 연구원에게 문의)
+  * mr_txt.xlsx : disease/normal 판독문 및 환자 정보 => (저장 위치(지오비전 학습 서버) : /data-1/lab/inseo/1tbdata 폴더에 있음)
+  * hallym_Brain MRI report.xls : embedding용 mri 판독문 모음 => (저장 위치(지오비전 학습 서버) : /data-1/lab/inseo/1tbdata 폴더에 있음)
+  * 데이터중심병원(3520개) : 평촌 뇌경색 DWI 데이터, 판독문 및 anotation 파일 없음(23.01.31 기준)  => (저장 위치(지오비전 학습 서버) : /data-1/lab/inseo/1tbdata 폴더에 있음)
 2. knu data
-  * disease (1,182개) : Dicom파일
-  * normal (22개) : Dicom파일
-  * 강원대학교 병원.xlsx : Tabular data
-  * 영상 판독지 요청 자료.xls : disease/normal 판독문 및 환자 정보 => 정제되지 않음, 검토 필요한 데이터
+  * disease (1,182개) : Dicom파일 => (저장 위치 : 박인서 연구원에게 문의)
+  * normal (22개) : Dicom파일 => (저장 위치 : 박인서 연구원에게 문의)
+  * 강원대학교 병원.xlsx : Tabular data => (저장 위치 : 박인서 연구원에게 문의)
+  * knu_영상 판독지 요청 자료.xls : disease/normal 판독문 및 환자 정보, 정제되지 않은 데이터, 검토 필요한 데이터 => (저장 위치(지오비전 학습 서버) : /data-1/lab/inseo/1tbdata 폴더에 있음)
+  * knu_data_with_mrtxt.xlsx : 영상 판독지 요청 데이터에서 판독문 cloumn만 가져와 tabular data에 합친 자료 => (저장 위치(지오비전 학습 서버) : /data-1/lab/inseo/1tbdata 폴더에 있음)
 ### CT 뇌출혈 데이터
-1. CT data
+1. CT data => (저장 위치(지오비전 학습 서버) : /data-1/lab/inseo/1tbdata 폴더에 있음)
   * CC_case (3,222개) : 춘천성심병원 CT 데이터, Dicom파일
   * HL_case (7,307개) : 평촌성심병원 CT 데이터, Dicom파일
   * HL_normal (30,576개) : 평촌성심병원 CT normal 데이터, Dicom파일
@@ -98,7 +109,7 @@
 
 ## Train the model
 
-**visualgpt gitlab 코드를 참고하여 데이터 부분만 변경하여 사용, 아래 gitlab주소 활용할 것**
+**visualgpt gitlab 코드를 참고하여 데이터 부분만 변경하여 사용, 아래 VisualGPT gitlab주소 활용할 것**
 
 **[주요 추가,변경 부분]**
 - CustomDataModule.py
@@ -152,6 +163,11 @@ python train_visualGPT.py  --exp_name visualGPT
   --data_channel 3
 ```
 
+## 협력기관
+- 한림성심병원
+    - 김철호 교수님 : gumdol52@naver.com
+- 강원대학교병원
+    - 장재원 교수님 : jaewon26@gmail.com , 김성헌 교수님 : dr.kim94@gmail.com
 
 ## VisualGPT
 [gitlab](https://github.com/Vision-CAIR/VisualGPT)
