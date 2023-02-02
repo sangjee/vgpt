@@ -114,7 +114,7 @@
 **[주요 추가,변경 부분]**
 - CustomDataModule.py
 - CustomDataset.py
-  - mri 데이터의 경우 mask 기준 가장 병변이 많은 slice 3개를 dicom 파일에서 뽑아 사용, dicom을 hdf5로 변환하여 사용
+  - mri 데이터의 경우 mask 기준 가장 병변이 많은 slice 3개를 hdf5 파일에서 뽑아 사용, dicom을 hdf5로 변환하여 사용
   - CT데이터의 경우 dicom 파일을 nifti파일로 변환하여 사용
 
 **[train data 활용 예시 - mri]**
@@ -140,7 +140,7 @@ python train_visualGPT.py  --exp_name visualGPT
   --test_data_path /data/mridata_test.csv
   --val_data_path /data/mridata_val.csv
   --epoch 100
-  --patience 5
+  --patience 10
   --batch_size 16
   --eval_batch_size 16
   --num_workers 4
