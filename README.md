@@ -22,7 +22,7 @@
     - CLIP의 text Encoder를 fine-tuning한 BERT로 바꿔도 0.001 정도의 성능 향상이 있음 => 거의 효과 없음
 4. Image Encoder를 2d에서 3d로 변경
     - 2D Resnet50 : BLUE1 0.349
-    - 3D Resnet50 : BLUE1 0.0.317
+    - 3D Resnet50 : BLUE1 0.317
     - 여전히 일반화 성능이 좋지 않음
     - 오히려 성능이 조금 떨어짐
     - CLIP의 경우 이미지 전체와 텍스트 전체의 유사도를 구하는 모델로 생성모델과 차이가 있음
